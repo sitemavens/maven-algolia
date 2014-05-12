@@ -457,11 +457,8 @@ class Indexer  {
 			if( (int)$postsPerPage > 0 ){
 				$limit = sprintf( "LIMIT %d, %d", $offset, $postsPerPage );
 			}
-//			$postFields = '*';
 			$postFields = $types->getFieldsIdsForQuery();
-			// Modify THIS and get just the important fields
 			$query = $wpdb->prepare( "SELECT {$postFields} FROM {$wpdb->posts} WHERE post_status IN ('publish') AND post_type = %s {$limit}", $types->getType() );
-//			echo $query;
 			$posts = $wpdb->get_results( $query );
 			$totalIndexed = 0;
 			if ( $posts ) {
@@ -477,9 +474,7 @@ class Indexer  {
 				unset($row);
 				unset( $post );
 				unset( $posts );
-	//			echo json_encode( $batch );
-	//				die;
-	//			
+
 				try {
 					$this->indexObjects($indexName, $batch);
 				} catch ( \Exception $exc ) {

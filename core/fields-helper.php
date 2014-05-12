@@ -46,16 +46,18 @@ class FieldsHelper{
 				'post_type'		=> array ( 'label' => "type", 'type' => 'string' )
 			);
 		
-		foreach($fieldsNames as $key => $value) {
+		$fieldsNames = apply_filters( "mvnAlgFields", $fieldsNames );
+		$fieldsNames = apply_filters( "mvnAlgFields_{$postType}", $fieldsNames );
+		foreach( (array)$fieldsNames as $key => $value) {
 			if( isset( $value['label'] ) && isset( $value['type'] ) ){
 				$fields[$key] = new Domain\Field( $key, $value['label'], $value['type'] );
 			}
 		}
 		
-		return apply_filters( "ma_{$postType}_fields", $fields );
+		return $fields;
 	}
 	
-	public static function getWPCompoundFields( $postType = 'post' ){
+	public static function getCompoundFields( $postType = 'post' ){
 		$fields = array();
 		
 		$fieldsNames = array(
@@ -63,13 +65,15 @@ class FieldsHelper{
 				'permalink' => array ( 'label' => "permalink", 'type' => 'string' ), 
 			);
 		
-		foreach($fieldsNames as $key => $value) {
+		$fieldsNames = apply_filters( "mvnAlgCompoundFields", $fieldsNames );
+		$fieldsNames = apply_filters( "mvnAlgCompoundFields_{$postType}", $fieldsNames );
+		foreach( (array)$fieldsNames as $key => $value) {
 			if( isset( $value['label'] ) && isset( $value['type'] ) ){
 				$fields[$key] = new Domain\Field( $key, $value['label'], $value['type'] );
 			}
 		}
 		
-		return apply_filters( "ma_{$postType}_compound_fields", $fields );
+		return $fields;
 	}
 	
 	
@@ -84,6 +88,7 @@ class FieldsHelper{
 				break;
 
 			default:
+				$value = apply_filters( "mvnAlgPostCompoundField" , $value, $post, $field );
 				break;
 		}
 		return $value;
@@ -114,7 +119,7 @@ class FieldsHelper{
 			$posts = new Domain\PostType();
 			$posts->setType( $postType );
 			$posts->setFields( FieldsHelper::getWPPostTableFields( $postType ) );
-			$posts->setCompoundFields( FieldsHelper::getWPCompoundFields( $postType ) );
+			$posts->setCompoundFields( FieldsHelper::getCompoundFields( $postType ) );
 			if( isset( $fields['metas'] ) && is_array( $fields['metas'] ) ){
 				$metaFields = array();
 				foreach ( $fields['metas'] as $metaKey => $metaValue) {
@@ -182,29 +187,33 @@ class FieldsHelper{
 				'count'				=> array ( 'label' => "postsRelated", 'type' => 'integer' ), 
 			);
 		
-		foreach($fieldsNames as $key => $value) {
+		$fieldsNames = apply_filters( "mvnAlgTaxFields", $fieldsNames );
+		$fieldsNames = apply_filters( "mvnAlgTaxFields_{$taxType}", $fieldsNames );
+		foreach( (array)$fieldsNames as $key => $value) {
 			if( isset( $value['label'] ) && isset( $value['type'] ) ){
 				$fields[$key] = new Domain\Field( $key, $value['label'], $value['type'] );
 			}
 		}
 		
-		return apply_filters( "ma_{$taxType}_fields", $fields );
+		return $fields;
 	}
 	
-	public static function getWPTaxCompoundFields( $taxType = 'category' ){
+	public static function getTaxCompoundFields( $taxType = 'category' ){
 		$fields = array();
 		
 		$fieldsNames = array(
 				'permalink' => array ( 'label' => "permalink", 'type' => 'string' ), 
 			);
 		
-		foreach($fieldsNames as $key => $value) {
+		$fieldsNames = apply_filters( "mvnAlgTaxCompoundFields", $fieldsNames );
+		$fieldsNames = apply_filters( "mvnAlgTaxCompoundFields_{$taxType}", $fieldsNames );
+		foreach( (array)$fieldsNames as $key => $value) {
 			if( isset( $value['label'] ) && isset( $value['type'] ) ){
 				$fields[$key] = new Domain\Field( $key, $value['label'], $value['type'] );
 			}
 		}
 		
-		return apply_filters( "ma_{$taxType}_compound_fields", $fields );
+		return $fields;
 	}
 	
 	
@@ -215,6 +224,7 @@ class FieldsHelper{
 				$value = get_term_link( $term );
 				break;
 			default:
+				$value = apply_filters( "mvnAlgTaxCompoundField" , $value, $term, $field );
 				break;
 		}
 		return $value;
@@ -257,7 +267,7 @@ class FieldsHelper{
 		$taxObj = new Domain\Taxonomy();
 		$taxObj->setType( $taxonomyType );
 		$taxObj->setFields( FieldsHelper::getWPTaxonomyFields( $taxonomyType ) );
-		$taxObj->setCompoundFields( FieldsHelper::getWPTaxCompoundFields( $taxonomyType ) );
+		$taxObj->setCompoundFields( FieldsHelper::getTaxCompoundFields( $taxonomyType ) );
 		if( !empty( $fields['indexName'] ) ){
 			$taxObj->setIndexName( $fields['indexName'] );
 		}
