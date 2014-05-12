@@ -1,2 +1,4 @@
-maven-algolia
-=============
+# Maven Algolia
+
+
+## Instalation
