@@ -1,7 +1,6 @@
 var mvnAlgoliaPrediction = (function($) {
 	var algolia;
 	var that;
-	var data = {};
 	var self = {
 		initialize: function() {
 			that = this;
@@ -12,8 +11,9 @@ var mvnAlgoliaPrediction = (function($) {
 		initAlgolia: function() {
 			algolia = new AlgoliaSearch( mvnAlgSettings.appId, mvnAlgSettings.apiKeySearch ); // public credentials
 		},
-		searchCallback: function(success, content) {
-			if ( success && content.results.length > 0 ) {
+		searchCallback: function(success, content, response) {
+			if ( success && content.results.length > 0 && that.lastQuery === content.results[0].query ) { // do not consider outdated answers
+	      var data = [];
 				var posts = content.results[0];
 				if( posts.hits.length > 0 ){
 					for (var i = 0; i < posts.hits.length; ++i) {
@@ -32,6 +32,7 @@ var mvnAlgoliaPrediction = (function($) {
 									};
 					}
 				}
+        response(data);
 			}
 		},
 		getDisplayPost: function( hit ) {
@@ -58,10 +59,12 @@ var mvnAlgoliaPrediction = (function($) {
 					attributesToRetrieve: ['objectID', 'title', 'permalink', 'excerpt', 'content', 'date', 'featuredImage' , 'category', '_tags'],
 					hitsPerPage: mvnAlgSearchVars.postsPerPage
 				});
-				algolia.sendQueriesBatch(that.searchCallback);
+				algolia.sendQueriesBatch(function(success, content) {
+					// forward 'response' to Algolia's callback in order to call it with up-to-date results
+					that.lastQuery = request.term;
+					that.searchCallback(success, content, response);
+				});
 			}
-			response(data);
-
 		}
 	};
 	return self;
