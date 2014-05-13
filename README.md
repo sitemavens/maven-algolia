@@ -1,10 +1,10 @@
 # Maven Algolia
 
-Maven Algolia makes it simple to add Algolia-powered search
-and autocomplete to your WordPress site. 
-Posts, Pages, Categories and Post Tags are automatically index in your Algolia account. Also
-we synchronise any change on those objects (new posts, modified ones, etc), so your search is always up-to-date. Results are displayed in the
-standard WordPress search results template, so you have total control over the design. We also automatically add a suggestive search out of the box! 
+Maven Algolia makes it simple to add Algolia-powered search and autocomplete to your WordPress site.
+
+Posts, Pages, Categories and Post Tags are automatically indexed and sync'd with Algolia via their API.  
+Changes and additions to your content (e.g. new or modified posts) are updated in real time, so your site search is always up-to-date. 
+Results are displayed in the standard WordPress search results template, so you have total control over the design. We also automatically add a suggestive search out of the box!
 
 
 ## Installation
