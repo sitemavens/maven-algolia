@@ -5,10 +5,9 @@
   Plugin URI:
   Description: Fully customise WordPress search implementing algolia API
   Version: 0.1
-  Author: Guillermo F. Tenaschuk
-  Author URI:
-  License: GPL
-  Copyright: Dinkum Interactive
+  Author: gtenaschuk, mustela
+  Author URI: http:www.sitemavens.com
+  Copyright: sitemavens.com
  */
 
 namespace MavenAlgolia;
