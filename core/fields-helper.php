@@ -179,12 +179,13 @@ class FieldsHelper{
 		
 		$fieldsNames = array(
 				'term_taxonomy_id'	=> array ( 'label' => "objectID", 'type' => 'integer' ), 
-				'term_id'			=> array ( 'label' => "termId", 'type' => 'integer' ), 
+				'term_id'			=> array ( 'label' => "termId", 'type' => 'integer' ),
 				'name'				=> array ( 'label' => "title", 'type' => 'string' ), 
 				'slug'				=> array ( 'label' => "slug", 'type' => 'string' ), 
 				'description'		=> array ( 'label' => "content", 'type' => 'string' ), 
 				'parent'			=> array ( 'label' => "parent", 'type' => 'integer' ), 
 				'count'				=> array ( 'label' => "postsRelated", 'type' => 'integer' ), 
+				'taxonomy'			=> array ( 'label' => "taxonomy", 'type' => 'string' ),
 			);
 		
 		$fieldsNames = apply_filters( "mvnAlgTaxFields", $fieldsNames );
@@ -217,7 +218,13 @@ class FieldsHelper{
 	}
 	
 	
-	
+	/**
+	 * 
+	 * @param object $term
+	 * @param string $field
+	 * @param mixed $value
+	 * @return mixed
+	 */
 	public static function getTaxCompoundFieldValue( $term, $field, $value = '' ) {
 		switch ( $field ) {
 			case 'permalink':
@@ -230,21 +237,44 @@ class FieldsHelper{
 		return $value;
 	}
 	
+	/**
+	 * Get the domain name
+	 * @return string
+	 */
+	public static function getDomainName ( ) {
+		$host =  parse_url ( site_url(), PHP_URL_HOST );
+		$domainName = array_shift( explode( '.', str_replace( 'www.', '', $host ) ) );
+		return ( $domainName ) ? $domainName : '' ;
+	}
+
+
+	/**
+	 * Return the array of taxonomies to index with their fields
+	 * @return array
+	 */
 	public static function getTaxonomiesToIndex(){
+		$indexPrefix = self::getDomainName();
+		if( !empty( $indexPrefix ) ){
+			$indexPrefix = sprintf( '%s-', $indexPrefix );
+		}
 		
 		$defaultTaxonomies =  array( 
 								'category' => array( 
-											'indexName' => 'WP-Categories',
+											'indexName' => sprintf( '%sWP-Categories', $indexPrefix ),
 											//'metas' => 	array( '{{META_KEY}}' =>  array( 'algoliaName' => '{{FIELD_NAME_IN_ALGOLIA}}', 'isSingle' => TRUE, 'type' => '{{FIELD_TYPE}}' ) )
 											),
 								'post_tag' => array( 
-											'indexName' => 'WP-Tags',
+											'indexName' => sprintf( '%sWP-Tags', $indexPrefix ),
 											//'metas' => 	array( '{{META_KEY}}' =>  array( 'algoliaName' => '{{FIELD_NAME_IN_ALGOLIA}}', 'isSingle' => TRUE, 'type' => '{{FIELD_TYPE}}' ) )
 											),
 								);
-		return apply_filters( 'mvnAlgTaxonomiesToIndex', $defaultTaxonomies );
+		return apply_filters( 'mvnAlgTaxonomiesToIndex', $defaultTaxonomies, $indexPrefix );
 	}
 	
+	/**
+	 * 
+	 * @return array
+	 */
 	public static function getTaxonomyObjects( ){
 		$taxonomyObjects = array();
 		$taxonomies = self::getPostTypesToIndex();
@@ -255,6 +285,11 @@ class FieldsHelper{
 		return $taxonomyObjects;
 	}
 	
+	/**
+	 * 
+	 * @param string $taxonomyType
+	 * @return \MavenAlgolia\Core\Domain\Taxonomy|null
+	 */
 	public static function getTaxonomyObjectByType( $taxonomyType ){
 		$taxonomies = self::getTaxonomiesToIndex();
 		if( isset( $taxonomies[$taxonomyType] ) ){
@@ -263,6 +298,12 @@ class FieldsHelper{
 		return;
 	}
 	
+	/**
+	 * 
+	 * @param strings $taxonomyType
+	 * @param array $fields
+	 * @return \MavenAlgolia\Core\Domain\Taxonomy
+	 */
 	public static function getTaxonomyObject( $taxonomyType, $fields ){
 		$taxObj = new Domain\Taxonomy();
 		$taxObj->setType( $taxonomyType );

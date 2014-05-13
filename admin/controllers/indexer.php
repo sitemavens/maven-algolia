@@ -20,6 +20,13 @@ class Indexer  {
 		// Update the post in the index when it was updated
 		// JUST WHEN IT IS publish
 		add_action( 'save_post', array( &$this, 'postUpdated' ), 11, 3 );
+		
+		// Update the term in the index when it was updated
+		add_action( "edited_term", array( &$this, 'termUpdated' ), 10, 3 );
+		// Insert the term in the index when it was created
+		add_action( "created_term", array( &$this, 'termUpdated' ), 10, 3 );
+		// Delete the term in the index when it was deleted in the site
+		add_action( 'delete_term', array( &$this, 'termDeleted' ), 10, 4 );
 	}
 	
 	/**
@@ -47,7 +54,7 @@ class Indexer  {
 			// Init the index
 			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
 			// TODO: remember to add the index by post type when we have it implemented
-			$indexer->removeObject( Registry::instance()->getDefaultIndex(), $post->ID );
+			$indexer->deleteObject( Registry::instance()->getDefaultIndex(), $post->ID );
 		}
 	}
 	
@@ -69,7 +76,7 @@ class Indexer  {
 		if ( !isset( $postTypesToIndex[$post->post_type] ) ) { return $postID; }
 		// Init the index
 		$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
-		$objectToIndex = $indexer->postToAlgoliaObject( $post,$postTypesToIndex[$post->post_type] );
+		$objectToIndex = $indexer->postToAlgoliaObject( $post, $postTypesToIndex[$post->post_type] );
 		if( $objectToIndex ){
 			// TODO: remember to add the index by post type when we have it implemented
 			$indexer->indexObject( Registry::instance()->getDefaultIndex(), $objectToIndex );
@@ -79,14 +86,54 @@ class Indexer  {
 	/**
 	 * Remove the post from the index when it was deleted in WP
 	 * Called from deleted_post action
-	 * @param int $postid
+	 * @param int $postId
 	 */
-	public function postDeleted( $postid ) {
-		if ( !empty( $postid ) ) {
+	public function postDeleted( $postId ) {
+		if ( !empty( $postId ) ) {
 			// Post is unpublished so remove from index
 			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
 			// TODO: remember to add the index by post type when we have it implemented
-			$indexer->removeObject( Registry::instance()->getDefaultIndex(), $postid );
+			$indexer->deleteObject( Registry::instance()->getDefaultIndex(), $postId );
 		}
+	}
+	
+	/**
+	 * Update term in the index when it was unpdated in WP
+	 * Called from edited_term and created_term actions
+	 * @param integer $termId
+	 * @param integer $ttId
+	 * @param string $taxonomy
+	 */
+	public function termUpdated( $termId, $ttId, $taxonomy ) {
+		$taxonomyToIndex = Core\FieldsHelper::getTaxonomyObjectByType( $taxonomy );
+		if ( empty( $taxonomyToIndex ) || ! $taxonomyToIndex->getIndexName() ) { return $termId; }
+		
+		// Get the object before deletion so we can pass to actions below
+		$termUpdated = get_term( $termId, $taxonomy );
+		if( !is_wp_error( $termUpdated ) && $termUpdated ){
+			// Init the index
+			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
+			// Convert the term in a algolia object
+			$objectToIndex = $indexer->termToAlgoliaObject( $termUpdated, $taxonomyToIndex );
+			if( $objectToIndex ){
+				$indexer->indexObject( $taxonomyToIndex->getIndexName(), $objectToIndex );
+			}
+		}
+	}
+	
+	/**
+	 * Remove the term from the index when it was deleted in WP
+	 * Called from delete_term action
+	 * @param integer $termId
+	 * @param integer $ttId
+	 * @param string $taxonomy
+	 * @param object $deleted_term
+	 */
+	public function termDeleted( $termId, $ttId, $taxonomy, $deleted_term ) {
+		$taxonomyToIndex = Core\FieldsHelper::getTaxonomyObjectByType( $taxonomy );
+		if ( empty( $ttId ) || empty( $taxonomyToIndex ) || ! $taxonomyToIndex->getIndexName() ) { return $termId; }
+		// Term was removed so remove it from index
+		$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
+		$indexer->deleteObject( $taxonomyToIndex->getIndexName(), $ttId );
 	}
 }
