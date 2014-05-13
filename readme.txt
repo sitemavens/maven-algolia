@@ -1,5 +1,13 @@
-# Maven Algolia
+=== Maven Algolia ===
+Contributors: mustela, gtenaschuk
+Tags: search, suggestive search, algolia
+Requires at least: 3.6
+Tested up to: 3.9
+Stable tag: trunk
 
+Fully customise WordPress search implementing algolia API
+
+== Description ==
 Maven Algolia makes it simple to add Algolia-powered search and autocomplete to your WordPress site.
 
 Posts, Pages, Categories and Post Tags are automatically indexed and sync'd with Algolia via their API.  
@@ -7,9 +15,8 @@ Changes and additions to your content (e.g. new or modified posts) are updated i
 Results are displayed in the standard WordPress search results template, so you have total control over the design. We also automatically add a suggestive search out of the box!
 
 
-## Installation
-
-If you already have an Algolia account 
+== Installation ==
+If you already have an Algolia account
 
 1. Download the plugin
 2. Activate the plugin
@@ -23,4 +30,10 @@ If you already have an Algolia account
 7. Enjoy!
 
 
-If you don't have an Algolia account yet, just follow the link https://www.algolia.com/
+If you don\'t have an Algolia account yet, just follow the link https://www.algolia.com/
+
+
+== Screenshots ==
+
+1. Suggestive Search
+2. A graphical interface to manage your settings

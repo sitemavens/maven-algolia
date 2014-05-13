@@ -21,12 +21,12 @@ var mvnAlgoliaPrediction = (function($) {
 						data[i] = {
 									label: hit.title,
 									value: hit.title,
-									title: hit._highlightResult.title.value,
+									title: (hit._highlightResult.title && hit._highlightResult.title.value) || hit.title,
 									permalink: hit.permalink,
 									categories: hit.category,
 									tags: hit._tags,
-									excerpt: hit._highlightResult.excerpt.value,
-									description: hit._highlightResult.content.value,
+									excerpt: (hit._highlightResult.excerpt && hit._highlightResult.excerpt.value) || hit.excerpt,
+									description: (hit._highlightResult.content && hit._highlightResult.content.value) || hit.content,
 									date: hit.date,
 									featuredImage: hit.featuredImage
 									};
