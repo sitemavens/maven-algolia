@@ -120,7 +120,9 @@ class Settings {
 	 * Show maven algolia item in the sidebar menu
 	 */
 	public static function adminMenu(){
-		add_menu_page(__( 'Maven Algolia Settings', 'mvnAlg' ), __( 'Maven Algolia', 'mvnAlg' ), 'manage_options', Registry::instance()->getPluginShortName().'_general_settings', 'MavenAlgolia\Admin\Controllers\Settings::showForm' );
+		$registry = Registry::instance();
+		$iconUrl = $registry->getPluginUrl()."admin/assets/images/icon.png";
+		add_menu_page(__( 'Maven Algolia Settings', 'mvnAlg' ), __( 'Maven Algolia', 'mvnAlg' ), 'manage_options', Registry::instance()->getPluginShortName().'_general_settings', 'MavenAlgolia\Admin\Controllers\Settings::showForm',$iconUrl );
 	}
 
 	/**
