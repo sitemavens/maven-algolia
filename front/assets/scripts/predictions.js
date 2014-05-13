@@ -86,14 +86,6 @@ jQuery(document).ready(function($) {
 			  // by the selected list item
 			  $(this).val(ui.item.label);
 			  return false;
-			},
-			// This function is executed when the users focuses on a item with the mouse
-			// or keyboard
-			focus: function(event, ui) {
-			  // Sets the text of the input textbox to the title of the object referenced
-			  // by the focused list item
-			  $(this).val(ui.item.label);
-			  return false;
 			}
 		  // Here we alter the standard behavior when rendering items in the list
 		  }).data("ui-autocomplete")._renderItem = function(ul, item) {
