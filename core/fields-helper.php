@@ -100,7 +100,7 @@ class FieldsHelper{
 											'indexFeaturedImage' => TRUE,
 											'taxonomies' => array( 
 																'category' => array( 'algoliaName' => 'category', 'isTag' => FALSE, 'forFaceting' => TRUE ),
-																'tag' => array( 'algoliaName' => 'tag', 'isTag' => TRUE, 'forFaceting' => FALSE ),
+																'post_tag' => array( 'algoliaName' => '_tags', 'isTag' => TRUE, 'forFaceting' => FALSE ),
 															),
 											//'metas' => 	array( '{{META_KEY}}' =>  array( 'algoliaName' => '{{FIELD_NAME_IN_ALGOLIA}}', 'isSingle' => TRUE, 'type' => '{{FIELD_TYPE}}' ) )
 											),
