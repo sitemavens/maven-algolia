@@ -21,10 +21,10 @@ class Indexer  {
 		// JUST WHEN IT IS publish
 		add_action( 'save_post', array( &$this, 'postUpdated' ), 11, 3 );
 		
-		// Update the term in the index when it was updated
-		add_action( "edited_term", array( &$this, 'termUpdated' ), 10, 3 );
+		// Update the term in the index when the counter was updated in WP
+		add_action( "edited_term_taxonomy", array( &$this, 'termTaxonomyUpdated' ), 10, 2 );
 		// Insert the term in the index when it was created
-		add_action( "created_term", array( &$this, 'termUpdated' ), 10, 3 );
+		add_action( "created_term", array( &$this, 'termCreated' ), 10, 3 );
 		// Delete the term in the index when it was deleted in the site
 		add_action( 'delete_term', array( &$this, 'termDeleted' ), 10, 4 );
 	}
@@ -100,11 +100,37 @@ class Indexer  {
 	/**
 	 * Update term in the index when it was unpdated in WP
 	 * Called from edited_term and created_term actions
+	 * @param integer $ttId
+	 * @param object $taxonomy
+	 */
+	public function termTaxonomyUpdated( $ttId, $taxonomy ) {
+		if( empty( $taxonomy->name ) ){ return $ttId; }
+		
+		$taxonomyToIndex = Core\FieldsHelper::getTaxonomyObjectByType( $taxonomy->name );
+		
+		if ( empty( $taxonomyToIndex ) || ! $taxonomyToIndex->getIndexName() ) { return $ttId; }
+		
+		// Get the object before deletion so we can pass to actions below
+		$termUpdated = get_term_by( 'term_taxonomy_id', $ttId, $taxonomy->name );
+		if( !is_wp_error( $termUpdated ) && $termUpdated ){
+			// Init the index
+			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
+			// Convert the term in a algolia object
+			$objectToIndex = $indexer->termToAlgoliaObject( $termUpdated, $taxonomyToIndex );
+			if( $objectToIndex ){
+				$indexer->indexObject( $taxonomyToIndex->getIndexName(), $objectToIndex );
+			}
+		}
+	}
+	
+	/**
+	 * Update term in the index when it was unpdated in WP
+	 * Called from edited_term and created_term actions
 	 * @param integer $termId
 	 * @param integer $ttId
 	 * @param string $taxonomy
 	 */
-	public function termUpdated( $termId, $ttId, $taxonomy ) {
+	public function termCreated( $termId, $ttId, $taxonomy ) {
 		$taxonomyToIndex = Core\FieldsHelper::getTaxonomyObjectByType( $taxonomy );
 		if ( empty( $taxonomyToIndex ) || ! $taxonomyToIndex->getIndexName() ) { return $termId; }
 		

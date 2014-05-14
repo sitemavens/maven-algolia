@@ -511,7 +511,6 @@ class Indexer  {
 	 * @return array
 	 */
 	public function termToAlgoliaObject( $term, $taxonomy = null ) {
-		global $wpdb;
 		
 		if( empty( $taxonomy ) && !empty( $term->taxonomy ) ){
 			$taxonomy = $term->taxonomy;
