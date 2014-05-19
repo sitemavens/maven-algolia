@@ -277,7 +277,7 @@ class FieldsHelper{
 	 */
 	public static function getTaxonomyObjects( ){
 		$taxonomyObjects = array();
-		$taxonomies = self::getPostTypesToIndex();
+		$taxonomies = self::getTaxonomiesToIndex();
 		foreach ( $taxonomies as $taxonomyType => $fields ) {
 			$taxonomyObjects[$taxonomyType] = self::getTaxonomyObject( $taxonomyType, $fields );
 		}

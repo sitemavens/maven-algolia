@@ -27,7 +27,6 @@ class Initializer  {
 			
 			$adminUrl = admin_url();
 			$homeUrl = set_url_scheme( home_url() );
-			
 			// Front js script
 			$settings = array( 
 					'siteUrl' => $homeUrl, 
@@ -35,7 +34,10 @@ class Initializer  {
 					'appId' => Registry::instance()->getAppId(),
 					'apiKeySearch' => Registry::instance()->getApiKeySearch(),
 					'indexName' => Registry::instance()->getDefaultIndex(),
-					'showExcerpt' => FALSE,
+					'showExcerpt' => 0, // Should be an Integer 0 | 1
+					'indexTaxonomies' => (int)Registry::instance()->indexTaxonomies(), // Should be an Integer 0 | 1
+					'taxonomiesToIndex' => (Registry::instance()->indexTaxonomies()) ? FieldsHelper::getTaxonomiesToIndex() : array(),
+					'labels' => array( 'taxonomies' => FieldsHelper::getTaxonomyLabels(), 'posts' => __('Posts') )
 				);
 			wp_localize_script( 'mvnAlgoliaSearch', 'mvnAlgSettings', $settings, Registry::instance()->getPluginVersion() );
 			
@@ -47,16 +49,8 @@ class Initializer  {
 			$vars = array( 
 					'inputSearchName' => 's',
 					'containerId' => 'mvn-alg-predictions',
-					'showExcerpt' => FALSE,
 					'postsPerPage' => 5,
 //					'labels' => array( 
-//										'indexationError' => 'There was an error trying to run indexation, please contact to the support team.',
-//										'starting' => 'Starting...',
-//										'indexing' => 'Indexing ',
-//										'complete' => 'Complete!',
-//										'running' => 'Indexation is running as background process, it could take several minutes.',
-//										'removing' => 'Removing unpublish posts from the index',
-//										'postsLabels' => $postLabels,
 //										),
 				);
 			wp_localize_script( 'mvnAlgoliaPrediction', 'mvnAlgSearchVars', $vars, Registry::instance()->getPluginVersion() );

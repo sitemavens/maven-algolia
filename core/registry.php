@@ -36,6 +36,7 @@ class Registry{
 				'defaultIndex' => '',
 				'appValid' => '0',
 				'appSearchValid' => '0',
+				'indexTaxonomies' => '0',
 			);
 			
 			self::$instance = new self( );
@@ -271,6 +272,10 @@ class Registry{
 	
 	public function isEnabled(){
 		return (bool) ( $this->isValidAppSearch() && $this->getDefaultIndex() );
+	}
+	
+	public function indexTaxonomies( ) {
+		return (bool)$this->getValue('indexTaxonomies');
 	}
 	
 } 
