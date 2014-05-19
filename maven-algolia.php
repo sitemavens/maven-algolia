@@ -4,7 +4,7 @@
   Plugin Name: Maven Algolia
   Plugin URI:
   Description: Fully customise WordPress search implementing algolia API
-  Version: 0.3
+  Version: 0.2
   Author: gtenaschuk, mustela
   Author URI: http://www.sitemavens.com
   Copyright: sitemavens.com
@@ -23,7 +23,7 @@ Core\Loader::load( plugin_dir_path( __FILE__ ), array( 'core/registry', 'core/ut
 $registry = Core\Registry::instance();
 $registry->setPluginDir( plugin_dir_path( __FILE__ ) );
 $registry->setPluginUrl( defined( 'DEV_ENV' ) && DEV_ENV ? WP_PLUGIN_URL . "/maven-algolia/" : plugin_dir_url( __FILE__ )  );
-$registry->setPluginVersion( "0.3" );
+$registry->setPluginVersion( "0.2" );
 $registry->setPluginName( 'Maven Algolia' );
 $registry->setPluginShortName( 'mvnAlg' );
 $registry->init();
