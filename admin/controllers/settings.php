@@ -184,8 +184,6 @@ class Settings {
 				$indexPostType = !empty( $_POST['indexPostType'] ) ? sanitize_text_field( $_POST['indexPostType'] ) : 0;
 				$offset = !empty( $_POST['queryOffset'] ) ? (int)$_POST['queryOffset'] : 0;
 
-				// Init the index
-				$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
 
 				
 				$postTypesToIndex = Core\FieldsHelper::getPostTypesObject();
@@ -193,6 +191,8 @@ class Settings {
 	//				while ( !$error && list ( $postTypeKey, $postType) = each ( $postTypesToIndex ) ) {
 						$postType = $postTypesToIndex[$indexPostType];
 						try {
+							// Init the index
+							$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
 							// indexing in a tmp index to avoid breaking something in the current site functionality
 							// Then it will be moved to the correct name with the new info
 							$indexName = Registry::instance()->getDefaultIndex();
@@ -233,16 +233,14 @@ class Settings {
 			if( Registry::instance()->isValidApp() ){
 				$indexTaxonomyType = !empty( $_POST['indexTaxonomyType'] ) ? sanitize_text_field( $_POST['indexTaxonomyType'] ) : 0;
 				$offset = !empty( $_POST['queryOffset'] ) ? (int)$_POST['queryOffset'] : 0;
-
-				// Init the index
-				$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
-
-				
+		
 				$taxonomyTypeToIndex = Core\FieldsHelper::getTaxonomyObjectByType( $indexTaxonomyType );
 //				var_dump($taxonomyTypeToIndex);
 //				var_dump($taxonomyTypeToIndex->getIndexName());
 				if( $taxonomyTypeToIndex && $taxonomyTypeToIndex->getIndexName() ){
 						try {
+							// Init the index
+							$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
 							// indexing in a tmp index to avoid breaking something in the current site functionality
 							// Then it will be moved to the correct name with the new info
 							$indexName =  $taxonomyTypeToIndex->getIndexName();
@@ -356,8 +354,6 @@ class Settings {
 		{
 			$offset = !empty( $_POST['queryOffset'] ) ? (int)$_POST['queryOffset'] : 0;
 			
-			// Init the index
-			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
 			
 			$errorMessage = '';
 			$error = FALSE;
@@ -365,6 +361,8 @@ class Settings {
 			$totalRemoved = 0;
 			if( $postTypesToIndex && is_array( $postTypesToIndex ) ){
 					try {
+						// Init the index
+						$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
 						$totalRemoved = $indexer->removeIndexData( Registry::instance()->getDefaultIndex(), $postTypesToIndex, $this->postsPerPageToRemove, $offset );
 					} catch ( Exception $exc ) {
 						$errorMessage = $exc->getTraceAsString();
@@ -388,14 +386,14 @@ class Settings {
 		check_ajax_referer( Settings::ajaxMoveAction, '_ajax_nonce_move');
 		if( !empty( $_POST['runMoveIndex'] ) &&  Registry::instance()->isValidApp() )
 		{
-			// Init the index
-			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
 			
 			$errorMessage = '';
 			$error = FALSE;
 			$postTypesToIndex = array_keys( Core\FieldsHelper::getPostTypesToIndex() );
 			if( $postTypesToIndex && is_array( $postTypesToIndex ) ){
 					try {
+						// Init the index
+						$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
 						$indexName = Registry::instance()->getDefaultIndex();
 						$tmpIndexName = sprintf( '%s_tmp', $indexName );
 						// rename the tempory index to its final name

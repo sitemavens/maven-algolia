@@ -13,20 +13,23 @@ class Indexer  {
 	 * 
 	 */
 	public function __construct ( ) {
-		// Delete the post in the index when it was deleted in the site
-		add_action( 'deleted_post', array( &$this, 'postDeleted' ) );
-		// Delete the post in the index when it was unpublished
-		add_action( 'transition_post_status', array( &$this, 'postUnpublished' ), 10, 3 );
-		// Update the post in the index when it was updated
-		// JUST WHEN IT IS publish
-		add_action( 'save_post', array( &$this, 'postUpdated' ), 11, 3 );
 		
-		// Update the term in the index when the counter was updated in WP
-		add_action( "edited_term_taxonomy", array( &$this, 'termTaxonomyUpdated' ), 10, 2 );
-		// Insert the term in the index when it was created
-		add_action( "created_term", array( &$this, 'termCreated' ), 10, 3 );
-		// Delete the term in the index when it was deleted in the site
-		add_action( 'delete_term', array( &$this, 'termDeleted' ), 10, 4 );
+		if( Registry::instance()->isEnabled() ){
+			// Delete the post in the index when it was deleted in the site
+			add_action( 'deleted_post', array( &$this, 'postDeleted' ) );
+			// Delete the post in the index when it was unpublished
+			add_action( 'transition_post_status', array( &$this, 'postUnpublished' ), 10, 3 );
+			// Update the post in the index when it was updated
+			// JUST WHEN IT IS publish
+			add_action( 'save_post', array( &$this, 'postUpdated' ), 11, 3 );
+
+			// Update the term in the index when the counter was updated in WP
+			add_action( "edited_term_taxonomy", array( &$this, 'termTaxonomyUpdated' ), 10, 2 );
+			// Insert the term in the index when it was created
+			add_action( "created_term", array( &$this, 'termCreated' ), 10, 3 );
+			// Delete the term in the index when it was deleted in the site
+			add_action( 'delete_term', array( &$this, 'termDeleted' ), 10, 4 );
+		}
 	}
 	
 	/**
@@ -51,10 +54,14 @@ class Indexer  {
 		$postTypesToIndex = Core\FieldsHelper::getPostTypesToIndex();
 		if ( isset( $postTypesToIndex[$post->post_type] ) && $old_status == 'publish' && $new_status != 'publish' && !empty( $post->ID ) ) {
 			// Post is unpublished so remove from index
-			// Init the index
-			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
-			// TODO: remember to add the index by post type when we have it implemented
-			$indexer->deleteObject( Registry::instance()->getDefaultIndex(), $post->ID );
+			try {
+				// Init the index
+				$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
+				// TODO: remember to add the index by post type when we have it implemented
+				$indexer->deleteObject( Registry::instance()->getDefaultIndex(), $post->ID );
+			} catch ( Exception $exc ) {
+				
+			}
 		}
 	}
 	
@@ -74,12 +81,16 @@ class Indexer  {
 		
 		$postTypesToIndex = Core\FieldsHelper::getPostTypesObject();
 		if ( !isset( $postTypesToIndex[$post->post_type] ) ) { return $postID; }
-		// Init the index
-		$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
-		$objectToIndex = $indexer->postToAlgoliaObject( $post, $postTypesToIndex[$post->post_type] );
-		if( $objectToIndex ){
-			// TODO: remember to add the index by post type when we have it implemented
-			$indexer->indexObject( Registry::instance()->getDefaultIndex(), $objectToIndex );
+		try {
+			// Init the index
+			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
+			$objectToIndex = $indexer->postToAlgoliaObject( $post, $postTypesToIndex[$post->post_type] );
+			if( $objectToIndex ){
+				// TODO: remember to add the index by post type when we have it implemented
+				$indexer->indexObject( Registry::instance()->getDefaultIndex(), $objectToIndex );
+			}
+		} catch ( Exception $exc ) {
+
 		}
 	}
 	
@@ -90,10 +101,14 @@ class Indexer  {
 	 */
 	public function postDeleted( $postId ) {
 		if ( !empty( $postId ) ) {
-			// Post is unpublished so remove from index
-			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
-			// TODO: remember to add the index by post type when we have it implemented
-			$indexer->deleteObject( Registry::instance()->getDefaultIndex(), $postId );
+			try {
+				// Post is unpublished so remove from index
+				$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
+				// TODO: remember to add the index by post type when we have it implemented
+				$indexer->deleteObject( Registry::instance()->getDefaultIndex(), $postId );
+			} catch ( Exception $exc ) {
+
+			}
 		}
 	}
 	
@@ -113,12 +128,16 @@ class Indexer  {
 		// Get the object before deletion so we can pass to actions below
 		$termUpdated = get_term_by( 'term_taxonomy_id', $ttId, $taxonomy->name );
 		if( !is_wp_error( $termUpdated ) && $termUpdated ){
-			// Init the index
-			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
-			// Convert the term in a algolia object
-			$objectToIndex = $indexer->termToAlgoliaObject( $termUpdated, $taxonomyToIndex );
-			if( $objectToIndex ){
-				$indexer->indexObject( $taxonomyToIndex->getIndexName(), $objectToIndex );
+			try {
+				// Init the index
+				$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
+				// Convert the term in a algolia object
+				$objectToIndex = $indexer->termToAlgoliaObject( $termUpdated, $taxonomyToIndex );
+				if( $objectToIndex ){
+					$indexer->indexObject( $taxonomyToIndex->getIndexName(), $objectToIndex );
+				}
+			} catch ( Exception $exc ) {
+
 			}
 		}
 	}
@@ -137,12 +156,16 @@ class Indexer  {
 		// Get the object before deletion so we can pass to actions below
 		$termUpdated = get_term( $termId, $taxonomy );
 		if( !is_wp_error( $termUpdated ) && $termUpdated ){
-			// Init the index
-			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
-			// Convert the term in a algolia object
-			$objectToIndex = $indexer->termToAlgoliaObject( $termUpdated, $taxonomyToIndex );
-			if( $objectToIndex ){
-				$indexer->indexObject( $taxonomyToIndex->getIndexName(), $objectToIndex );
+			try {
+				// Init the index
+				$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
+				// Convert the term in a algolia object
+				$objectToIndex = $indexer->termToAlgoliaObject( $termUpdated, $taxonomyToIndex );
+				if( $objectToIndex ){
+					$indexer->indexObject( $taxonomyToIndex->getIndexName(), $objectToIndex );
+				}
+			} catch ( Exception $exc ) {
+
 			}
 		}
 	}
@@ -158,8 +181,12 @@ class Indexer  {
 	public function termDeleted( $termId, $ttId, $taxonomy, $deleted_term ) {
 		$taxonomyToIndex = Core\FieldsHelper::getTaxonomyObjectByType( $taxonomy );
 		if ( empty( $ttId ) || empty( $taxonomyToIndex ) || ! $taxonomyToIndex->getIndexName() ) { return $termId; }
-		// Term was removed so remove it from index
-		$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
-		$indexer->deleteObject( $taxonomyToIndex->getIndexName(), $ttId );
+		try {
+				// Term was removed so remove it from index
+			$indexer = new Core\Indexer( Registry::instance()->getAppId(), Registry::instance()->getApiKey() );
+			$indexer->deleteObject( $taxonomyToIndex->getIndexName(), $ttId );
+		} catch ( Exception $exc ) {
+
+		}
 	}
 }
