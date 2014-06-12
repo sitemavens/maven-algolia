@@ -76,7 +76,7 @@ var mvnAlgoliaPrediction = (function($) {
 			var htmlPost = '';
 			htmlPost += '			<a href="' + hit.permalink + '" class="mvn-alg-ls-item-title">';
 			if( typeof hit.featuredImage !== 'undefined' && hit.featuredImage ){
-				html += '	<img src="'+hit.featuredImage.file+'" width="40" height="60" />';
+				htmlPost += '	<img src="'+hit.featuredImage.file+'" width="40" height="60" />';
 			}
 			htmlPost += '				<strong>' + hit.title + '</strong>';
 
