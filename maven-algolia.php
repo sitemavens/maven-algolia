@@ -4,7 +4,7 @@
   Plugin Name: Maven Algolia
   Plugin URI:
   Description: Fully customise WordPress search implementing algolia API
-  Version: 0.3
+  Version: 0.4
   Author: gtenaschuk, mustela
   Author URI: http://www.sitemavens.com
   Copyright: sitemavens.com

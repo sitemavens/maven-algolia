@@ -74,9 +74,9 @@ class Indexer  {
 	public function postUpdated( $postID, $post ) {
 		// If this is just a revision, don't send the email.
 		if ( wp_is_post_revision( $postID ) ){ return; }
-		if ( count( $_POST ) <= 0 && count( $_GET ) <= 0 ) { return $postID; }
+//		if ( count( $_POST ) <= 0 && count( $_GET ) <= 0 ) { return $postID; }
 		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) { return $postID; }
-		if ( !current_user_can('edit_post', $postID) ) { return $postID; }
+//		if ( !current_user_can('edit_post', $postID) ) { return $postID; }
 		if ( $post->post_status !== 'publish' ) { return $postID; }
 		
 		$postTypesToIndex = Core\FieldsHelper::getPostTypesObject();
