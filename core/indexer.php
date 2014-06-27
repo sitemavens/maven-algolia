@@ -408,7 +408,6 @@ class Indexer  {
 			if( (int)$postsPerPage > 0 ){
 				$limit = sprintf( "LIMIT %d, %d", $offset, $postsPerPage );
 			}
-//			$query = "SELECT {$postFields} FROM {$wpdb->posts} {$join} WHERE 1 = 1 {$where} {$limit}";
 			$join = apply_filters('mvnAlgRemoveIndexDataJoin', '');
 			$where = apply_filters('mvnAlgRemoveIndexDataWhere', " AND ( post_status IN ('{$postStatuses}') AND post_type IN ( '{$postTypes}' ) ) ");
 			$query = "SELECT ID FROM {$wpdb->posts} {$join} WHERE 1 = 1 {$where} {$limit}";
