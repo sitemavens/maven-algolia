@@ -88,6 +88,7 @@ class Indexer  {
 			if( $objectToIndex ){
 				// TODO: remember to add the index by post type when we have it implemented
 				$indexer->indexObject( Registry::instance()->getDefaultIndex(), $objectToIndex );
+				do_action( 'mvnAlgObjectIndexedOnPostUpdate', $post, $objectToIndex );
 			}
 		} catch ( Exception $exc ) {
 
