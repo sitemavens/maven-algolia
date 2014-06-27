@@ -408,7 +408,10 @@ class Indexer  {
 			if( (int)$postsPerPage > 0 ){
 				$limit = sprintf( "LIMIT %d, %d", $offset, $postsPerPage );
 			}
-			$query = "SELECT ID FROM {$wpdb->posts} WHERE post_status IN ('{$postStatuses}') AND post_type IN ( '{$postTypes}' ) {$limit}";
+//			$query = "SELECT {$postFields} FROM {$wpdb->posts} {$join} WHERE 1 = 1 {$where} {$limit}";
+			$join = apply_filters('mvnAlgRemoveIndexDataJoin', '');
+			$where = apply_filters('mvnAlgRemoveIndexDataWhere', " AND ( post_status IN ('{$postStatuses}') AND post_type IN ( '{$postTypes}' ) ) ");
+			$query = "SELECT ID FROM {$wpdb->posts} {$join} WHERE 1 = 1 {$where} {$limit}";
 			$posts = $wpdb->get_results( $query );
 			$totalRemoved = 0;
 			if ( $posts ) {
@@ -459,7 +462,7 @@ class Indexer  {
 			}
 			$postFields = $types->getFieldsIdsForQuery();
 			$join = apply_filters('mvnAlgIndexDataJoin', '');
-			$where = apply_filters('mvnAlgIndexDataWhere', " AND post_status IN ('publish') AND post_type = '{$types->getType()}'");
+			$where = apply_filters('mvnAlgIndexDataWhere', " AND ( post_status IN ('publish') AND post_type = '{$types->getType()}' )");
 			$query = "SELECT {$postFields} FROM {$wpdb->posts} {$join} WHERE 1 = 1 {$where} {$limit}";
 			$posts = $wpdb->get_results( $query );
 			$totalIndexed = 0;
