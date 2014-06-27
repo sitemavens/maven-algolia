@@ -458,7 +458,9 @@ class Indexer  {
 				$limit = sprintf( "LIMIT %d, %d", $offset, $postsPerPage );
 			}
 			$postFields = $types->getFieldsIdsForQuery();
-			$query = $wpdb->prepare( "SELECT {$postFields} FROM {$wpdb->posts} WHERE post_status IN ('publish') AND post_type = %s {$limit}", $types->getType() );
+			$join = apply_filters('mvnAlgIndexDataJoin', '');
+			$where = apply_filters('mvnAlgIndexDataWhere', " AND post_status IN ('publish') AND post_type = '{$types->getType()}'");
+			$query = "SELECT {$postFields} FROM {$wpdb->posts} {$join} WHERE 1 = 1 {$where} {$limit}";
 			$posts = $wpdb->get_results( $query );
 			$totalIndexed = 0;
 			if ( $posts ) {
