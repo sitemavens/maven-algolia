@@ -76,7 +76,7 @@ class Settings {
 			
 			$postTypesToIndex = Core\FieldsHelper::getPostTypesToIndex();
 			$postLabels = Core\FieldsHelper::getPostTypesLabels( $postTypesToIndex );
-			$taxonomiesToIndex = Core\FieldsHelper::getTaxonomiesToIndex();
+			$taxonomiesToIndex = (Registry::instance()->indexTaxonomies()) ? Core\FieldsHelper::getTaxonomiesToIndex() : array();
 			$taxonomyLabels = Core\FieldsHelper::getTaxonomyLabels();
 			
 			
@@ -98,6 +98,7 @@ class Settings {
 					'postsPerPage' => $this->postsPerPageToIndex,
 					'postsPerPageToRemove' => $this->postsPerPageToRemove,
 					'postTypesToIndex' => array_keys( $postTypesToIndex ),
+					'indexTaxonomies' => (int)Registry::instance()->indexTaxonomies(), // Should be an Integer 0 | 1
 					'taxonomyTypesToIndex' => array_keys( $taxonomiesToIndex ),
 					'totalPublishedPosts' => self::getTotalPublishedPosts(),
 					'totalNonPublishedPosts' => self::getTotalNonPublishedPosts(),

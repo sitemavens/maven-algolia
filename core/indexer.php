@@ -410,7 +410,7 @@ class Indexer  {
 			}
 			$join = apply_filters('mvnAlgRemoveIndexDataJoin', '');
 			$where = apply_filters('mvnAlgRemoveIndexDataWhere', " AND ( post_status IN ('{$postStatuses}') AND post_type IN ( '{$postTypes}' ) ) ");
-			$query = "SELECT ID FROM {$wpdb->posts} {$join} WHERE 1 = 1 {$where} {$limit}";
+			$query = "SELECT DISTINCT ID FROM {$wpdb->posts} {$join} WHERE 1 = 1 {$where} {$limit}";
 			$posts = $wpdb->get_results( $query );
 			$totalRemoved = 0;
 			if ( $posts ) {
