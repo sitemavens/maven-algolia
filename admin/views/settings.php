@@ -37,6 +37,7 @@ $langDomain = $registry->getPluginShortName();
 										<tr>
 											<th scope="row">
 												<?php esc_html_e('This is the list of Taxonomies that would be indexed, please remember that each taxonomy will have its own index name and they will appear separately in the "suggestions search" popup.', $langDomain); ?><br>
+												<?php printf( '<strong>%s:</strong> %s', esc_html__('Important', $langDomain), esc_html__('when you enable index tanomies option you should reindex all the content.', $langDomain) ); ?><br>
 												<ul><?php
 													$taxonomiesToIndex = Core\FieldsHelper::getTaxonomyObjects();
 													if ($taxonomiesToIndex):

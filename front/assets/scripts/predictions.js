@@ -46,26 +46,28 @@ var mvnAlgoliaPrediction = (function($) {
 					}
 				}
 			}
-			if( self.indexTaxonomies() ){
+			if( success && self.indexTaxonomies() ){
 				jQuery.each(mvnAlgSettings.taxonomiesToIndex, function(index, element){
 					resultIndex = jQuery.inArray( index, algoliaQueries );
-					var terms = content.results[resultIndex];
-					if( terms.hits.length > 0 ){
-						for (var i = 0; i < terms.hits.length; ++i) {
-							var hit = terms.hits[i];
-							var hitInfo = {
-										label: hit.title,
-										value: hit.objectID,
-										title: (hit._highlightResult.title && hit._highlightResult.title.value) || hit.title,
-										permalink: hit.permalink,
-										featuredImage: hit.image,									
-										termId: hit.termId,
-										parent: hit.parent,
-										postsRelated: hit.postsRelated,
-										taxonomy: hit.taxonomy,
-										category: (mvnAlgSettings.labels.taxonomies[index]) ? mvnAlgSettings.labels.taxonomies[index] : ''   // TAXONOMY LABEL
-										};
-							data.push( hitInfo );
+					if( typeof content.results !== 'undefined' && typeof content.results[resultIndex] !== 'undefined' ){
+						var terms = content.results[resultIndex];
+						if( terms.hits.length > 0 ){
+							for (var i = 0; i < terms.hits.length; ++i) {
+								var hit = terms.hits[i];
+								var hitInfo = {
+											label: hit.title,
+											value: hit.objectID,
+											title: (hit._highlightResult.title && hit._highlightResult.title.value) || hit.title,
+											permalink: hit.permalink,
+											featuredImage: hit.image,									
+											termId: hit.termId,
+											parent: hit.parent,
+											postsRelated: hit.postsRelated,
+											taxonomy: hit.taxonomy,
+											category: (mvnAlgSettings.labels.taxonomies[index]) ? mvnAlgSettings.labels.taxonomies[index] : ''   // TAXONOMY LABEL
+											};
+								data.push( hitInfo );
+							}
 						}
 					}
 				});
