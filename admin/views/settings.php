@@ -74,7 +74,7 @@ $langDomain = $registry->getPluginShortName();
 										</tr>
 										<tr>
 											<td>
-												<label for="mvnAlg_showExcerptInPopup"><?php esc_html_e('Show Thumbnails in search results', $langDomain); ?></label>
+												<label for="mvnAlg_showExcerptInPopup"><?php esc_html_e('Show Excerpt in search results', $langDomain); ?></label>
 											</td>
 											<td>
 												<input type="hidden" value="0" name="<?php echo Settings::settingsField; ?>[showExcerptInPopup]">
