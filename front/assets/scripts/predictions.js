@@ -84,13 +84,18 @@ var mvnAlgoliaPrediction = (function($) {
 				}
 			}
 			
-			htmlPost += '		<span class="mvn-alg-item-title">' + hit.title + '</span>';
+			htmlPost += '		<span class="mvn-alg-item-title">' + hit.title.trim() + '</span>';
 
 			if( typeof hit.categories !== 'undefined' ){
 				htmlPost += '		<span class="mvn-alg-item-cats">' + hit.categories.join() + '</span>';
 			}
-			if( mvnAlgSettings.showExcerpt && typeof hit.excerpt !== 'undefined' && hit.excerpt ){
-				htmlPost += '		<span class="mvn-alg-item-desc">' + hit.excerpt + '</span>';
+			if( mvnAlgSettings.showExcerptInPopup && typeof hit.excerpt !== 'undefined' && hit.excerpt ){
+				var excerptSize = mvnAlgSettings.excerptMaxChars || 0;
+				var excerptCut = hit.excerpt;
+				if( excerptSize > 0 ){
+					excerptCut = self.trimString( hit.excerpt, excerptSize );
+				}
+				htmlPost += '		<span class="mvn-alg-item-excerpt">' + excerptCut + '</span>';
 			}
 			htmlPost += '	</a>';
 			return htmlPost;
@@ -106,7 +111,7 @@ var mvnAlgoliaPrediction = (function($) {
 					htmlPost += '		<span class="mvn-alg-cat-thumbnail"><img class="mvn-alg-cat-thumbnail-img" src="'+imgSrc+'" width="'+imgW+'" height="'+imgH+'" /></span>';
 				}
 			}
-			html += '		<span class="mvn-alg-cat-title">' + hit.title + '</span>';
+			html += '		<span class="mvn-alg-cat-title">' + hit.title.trim() + '</span>';
 			html += '</a>';
 			return html;
 		},
@@ -116,6 +121,24 @@ var mvnAlgoliaPrediction = (function($) {
 				src = thumbnail.sizes[size].file;
 			}
 			return src;
+		},
+		trimString: function( string, maxChars, appendix ) {
+			if( !appendix ){
+				appendix = '...';
+			}
+			string = string.trim();
+			
+			if( string.length > maxChars ){
+				//trim the string to the maximum length
+				string = string.substr(0, maxChars);
+				var spacePosition = string.lastIndexOf(" ");
+				//re-trim if we are in the middle of a word and there is an space in the string, if not keep the word cut
+				if( spacePosition !== -1 ){
+					string = string.substr(0, Math.min(string.length, string.lastIndexOf(" ")));
+				}
+				string += appendix;
+			}
+			return string;
 		},
 		search: function( request, response ) {
 			if( typeof algolia !== 'undefined' ){

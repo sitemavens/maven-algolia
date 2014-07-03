@@ -39,6 +39,8 @@ class Registry{
 				'indexTaxonomies' => '0',
 				'showThumbInPopup' => '0',
 				'popupThumbnailArgs' => array('w' => 20, 'h' => 40),
+				'showExcerptInPopup' => '0',
+				'excerptMaxChars' => '0',
 			);
 			
 			self::$instance = new self( );
@@ -278,6 +280,14 @@ class Registry{
 	
 	public function indexTaxonomies( ) {
 		return (bool)$this->getValue('indexTaxonomies');
+	}
+	
+	public function showExcerptInPopup( ) {
+		return (bool)$this->getValue('showExcerptInPopup');
+	}
+	
+	public function getExcerptMaxChars( ) {
+		return $this->getValue('excerptMaxChars');
 	}
 	
 	public function showThumbInPopup( ) {

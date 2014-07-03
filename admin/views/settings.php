@@ -27,14 +27,14 @@ $langDomain = $registry->getPluginShortName();
 										</tr>
 									</thead>
 									<tbody>
-										<tr valign="top">
+										<tr>
 											<td>
 												<label for="mvnAlg_indexTaxonomies"><?php esc_html_e('Check if you want to index taxonomies', $langDomain); ?></label>
 												<input type="hidden" value="0" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
 												<input type="checkbox" class="checkbox" <?php checked($registry->indexTaxonomies()); ?> value="1" id="mvnAlg_indexTaxonomies" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
 											</td>
 										</tr>
-										<tr valign="top">
+										<tr>
 											<th scope="row">
 												<?php esc_html_e('This is the list of Taxonomies that would be indexed, please remember that each taxonomy will have its own index name and they will appear separately in the "suggestions search" popup.', $langDomain); ?><br>
 												<ul><?php
@@ -62,7 +62,24 @@ $langDomain = $registry->getPluginShortName();
 										</tr>
 									</thead>
 									<tbody>
-										<tr valign="top">
+										<tr>
+											<td>
+												<label for="mvnAlg_showExcerptInPopup"><?php esc_html_e('Show Thumbnails in search results', $langDomain); ?></label>
+											</td>
+											<td>
+												<input type="hidden" value="0" name="<?php echo Settings::settingsField; ?>[showExcerptInPopup]">
+												<input type="checkbox" class="checkbox" <?php checked($registry->showExcerptInPopup()); ?> value="1" id="mvnAlg_showExcerptInPopup" name="<?php echo Settings::settingsField; ?>[showExcerptInPopup]">
+											</td>
+										</tr>
+										<tr id="escerptSize">
+											<td>
+												<?php esc_html_e('Max number of characters to show', $langDomain); ?>
+											</td>
+											<td>
+												<input type="text" class="" value="<?php echo esc_attr($registry->getExcerptMaxChars()); ?>" id="mvnAlg_excerptMaxChars" name="<?php echo Settings::settingsField; ?>[excerptMaxChars]"> (<?php esc_html_e( '0 to show it entirely', $langDomain ) ?>)
+											</td>
+										</tr>
+										<tr>
 											<td>
 												<label for="mvnAlg_showThumbInPopup"><?php esc_html_e('Show Thumbnails in search results', $langDomain); ?></label>
 											</td>
@@ -73,9 +90,9 @@ $langDomain = $registry->getPluginShortName();
 										</tr>
 										<tr id="thumbSizes">
 											<td>
-												<?php esc_html_e('Width:', $langDomain); ?>
+												<?php esc_html_e('Width', $langDomain); ?>
 												<br>
-												<?php esc_html_e('Height:', $langDomain); ?>
+												<?php esc_html_e('Height', $langDomain); ?>
 											</td>
 											<td>
 												<?php 
@@ -109,15 +126,15 @@ $langDomain = $registry->getPluginShortName();
 						</tr>
 					</thead>
 					<tbody>
-						<tr valign="top">
+						<tr>
 							<th scope="row"><label for="mvnAlg_appId"><?php esc_html_e('APP ID', $langDomain); ?></label></th>
 							<td><input type="text" class="regular-text" value="<?php echo esc_attr($registry->getAppId()); ?>" id="mvnAlg_appId" name="<?php echo Settings::settingsField; ?>[appId]"></td>
 						</tr>
-						<tr valign="top">
+						<tr>
 							<th scope="row"><label for="mvnAlg_apiKey"><?php esc_html_e('API Key', $langDomain); ?></label></th>
 							<td><input type="text" class="regular-text" value="<?php echo esc_attr($registry->getApiKey()); ?>" id="mvnAlg_apiKey" name="<?php echo Settings::settingsField; ?>[apiKey]"></td>
 						</tr>
-						<tr valign="top">
+						<tr>
 							<th scope="row"><label for="mvnAlg_apiKeySearch"><?php esc_html_e('API Key for Search Only', $langDomain); ?></label></th>
 							<td><input type="text" class="regular-text" value="<?php echo esc_attr($registry->getApiKeySearch()); ?>" id="mvnAlg_apiKeySearch" name="<?php echo Settings::settingsField; ?>[apiKeySearch]"></td>
 						</tr>
@@ -137,13 +154,13 @@ $langDomain = $registry->getPluginShortName();
 							</tr>
 						</thead>
 						<tbody>
-							<tr valign="top">
+							<tr>
 								<th scope="row"><label for="mvnAlg_defaultIndex"><?php esc_html_e('Index Name', $langDomain); ?></label></th>
 								<td><input type="text" class="regular-text" value="<?php echo esc_attr($registry->getDefaultIndex()); ?>" id="mvnAlg_defaultIndex" name="<?php echo Settings::settingsField; ?>[defaultIndex]"></td>
 							</tr>
 							<?php if ($registry->getDefaultIndex()): ?>
 
-								<tr valign="top" class="index-action-row index-action-button">
+								<tr class="index-action-row index-action-button">
 									<th scope="row"><label for="mvnAlg_index"><?php esc_html_e('Click to index content', $langDomain); ?></label></th>
 									<td>
 										<div class="algolia-action-button" style="width:50%;">
