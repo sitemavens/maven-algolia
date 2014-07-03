@@ -86,7 +86,7 @@ var mvnAlgoliaPrediction = (function($) {
 			
 			htmlPost += '		<span class="mvn-alg-item-title">' + hit.title.trim() + '</span>';
 
-			if( typeof hit.categories !== 'undefined' ){
+			if( mvnAlgSettings.showPostCategoriesInPopup && typeof hit.categories !== 'undefined' ){
 				htmlPost += '		<span class="mvn-alg-item-cats">' + hit.categories.join() + '</span>';
 			}
 			if( mvnAlgSettings.showExcerptInPopup && typeof hit.excerpt !== 'undefined' && hit.excerpt ){

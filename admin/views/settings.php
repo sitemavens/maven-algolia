@@ -64,6 +64,15 @@ $langDomain = $registry->getPluginShortName();
 									<tbody>
 										<tr>
 											<td>
+												<label for="mvnAlg_showPostCategoriesInPopup"><?php esc_html_e('Show Post Categories in search results', $langDomain); ?></label>
+											</td>
+											<td>
+												<input type="hidden" value="0" name="<?php echo Settings::settingsField; ?>[showPostCategoriesInPopup]">
+												<input type="checkbox" class="checkbox" <?php checked($registry->showPostCategoriesInPopup()); ?> value="1" id="mvnAlg_showPostCategoriesInPopup" name="<?php echo Settings::settingsField; ?>[showPostCategoriesInPopup]">
+											</td>
+										</tr>
+										<tr>
+											<td>
 												<label for="mvnAlg_showExcerptInPopup"><?php esc_html_e('Show Thumbnails in search results', $langDomain); ?></label>
 											</td>
 											<td>
@@ -76,7 +85,7 @@ $langDomain = $registry->getPluginShortName();
 												<?php esc_html_e('Max number of characters to show', $langDomain); ?>
 											</td>
 											<td>
-												<input type="text" class="" value="<?php echo esc_attr($registry->getExcerptMaxChars()); ?>" id="mvnAlg_excerptMaxChars" name="<?php echo Settings::settingsField; ?>[excerptMaxChars]"> (<?php esc_html_e( '0 to show it entirely', $langDomain ) ?>)
+												<input type="text" class="" value="<?php echo esc_attr($registry->getExcerptMaxChars()); ?>" id="mvnAlg_excerptMaxChars" name="<?php echo Settings::settingsField; ?>[excerptMaxChars]"> <br> <em><?php esc_html_e( '0 to show it entirely', $langDomain ) ?></em>
 											</td>
 										</tr>
 										<tr>

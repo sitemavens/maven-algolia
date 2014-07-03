@@ -37,6 +37,7 @@ class Registry{
 				'appValid' => '0',
 				'appSearchValid' => '0',
 				'indexTaxonomies' => '0',
+				'showPostCategoriesInPopup' => '0',
 				'showThumbInPopup' => '0',
 				'popupThumbnailArgs' => array('w' => 20, 'h' => 40),
 				'showExcerptInPopup' => '0',
@@ -280,6 +281,10 @@ class Registry{
 	
 	public function indexTaxonomies( ) {
 		return (bool)$this->getValue('indexTaxonomies');
+	}
+	
+	public function showPostCategoriesInPopup( ) {
+		return (bool)$this->getValue('showPostCategoriesInPopup');
 	}
 	
 	public function showExcerptInPopup( ) {

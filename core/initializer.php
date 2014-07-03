@@ -34,6 +34,7 @@ class Initializer  {
 					'appId' => Registry::instance()->getAppId(),
 					'apiKeySearch' => Registry::instance()->getApiKeySearch(),
 					'indexName' => Registry::instance()->getDefaultIndex(),
+					'showPostCategoriesInPopup' => Registry::instance()->showPostCategoriesInPopup(),
 					'showExcerptInPopup' => Registry::instance()->showExcerptInPopup(),
 					'excerptMaxChars' => Registry::instance()->getExcerptMaxChars(),
 					'indexTaxonomies' => Registry::instance()->indexTaxonomies(),
