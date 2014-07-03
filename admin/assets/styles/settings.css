@@ -360,7 +360,7 @@
 }
 #mvnAlgoliaSettings .progress-label {
 	position: absolute;
-	left: 45%;
+	left: 5%;
 	top: 4px;
 	font-weight: bold;
 	text-shadow: 1px 1px 0 #fff;
@@ -375,7 +375,7 @@
 	background: #FFF;
 	border: 1px solid #CCC;
 }
-#mvnAlgoliaSettings #mvnAlgtabs .ui-widget-header {
+#mvnAlgoliaSettings #mvnAlgtabs .ui-tabs-nav.ui-widget-header {
     background: none;
     border: none;
     color: #FFFFFF;

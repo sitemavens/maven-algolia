@@ -83,7 +83,7 @@ $langDomain = $registry->getPluginShortName();
 										</tr>
 										<tr id="escerptSize">
 											<td>
-												<?php esc_html_e('Max number of characters to show', $langDomain); ?>
+												<?php esc_html_e('Max number of characters to show in excerpt', $langDomain); ?>
 											</td>
 											<td>
 												<input type="text" class="" value="<?php echo esc_attr($registry->getExcerptMaxChars()); ?>" id="mvnAlg_excerptMaxChars" name="<?php echo Settings::settingsField; ?>[excerptMaxChars]"> <br> <em><?php esc_html_e( '0 to show it entirely', $langDomain ) ?></em>
@@ -100,17 +100,17 @@ $langDomain = $registry->getPluginShortName();
 										</tr>
 										<tr id="thumbSizes">
 											<td>
-												<?php esc_html_e('Width', $langDomain); ?>
+												<?php esc_html_e('Thumbnail Width', $langDomain); ?>
 												<br>
-												<?php esc_html_e('Height', $langDomain); ?>
+												<?php esc_html_e('Thumbnail Height', $langDomain); ?>
 											</td>
 											<td>
 												<?php 
 												$popupThumbArgs = $registry->getPopupThumbnailArgs();
 												?>
-												<input type="text" class="" value="<?php echo esc_attr($popupThumbArgs['w']); ?>" id="mvnAlg_popupThumbWidth" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][w]">
+												<input type="text" class="" value="<?php echo esc_attr($popupThumbArgs['w']); ?>" id="mvnAlg_popupThumbWidth" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][w]">px
 												<br>
-												<input type="text" class="" value="<?php echo esc_attr($popupThumbArgs['h']); ?>" id="mvnAlg_popupThumbHeight" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][h]">
+												<input type="text" class="" value="<?php echo esc_attr($popupThumbArgs['h']); ?>" id="mvnAlg_popupThumbHeight" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][h]">px
 											</td>
 										</tr>
 									</tbody>
