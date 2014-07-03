@@ -6,7 +6,7 @@ use MavenAlgolia\Core;
 $registry = Core\Registry::instance();
 $langDomain = $registry->getPluginShortName();
 ?>
-<div class="wrap">
+<div id="mvnAlgoliaSettings" class="wrap">
 	<div id="icon-options-general" class="icon32"><br></div>
 	<h2>Maven Algolia Settings</h2>
 	<form action="" method="post">
@@ -15,7 +15,7 @@ $langDomain = $registry->getPluginShortName();
 				<li><a class="nav-tab nav-tab-active" href="#tab-general"><?php esc_html_e('Account', $langDomain); ?></a></li>
 				<li><a class="nav-tab" href="#tab-customization"><?php esc_html_e('Cutomization', $langDomain); ?></a></li>
 			</ul>
-			<div id="tab-customization" style="width: 100%">
+			<div id="tab-customization">
 				<table class="wrap">
 					<tbody>
 						<tr>
