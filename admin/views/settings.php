@@ -1,64 +1,153 @@
-<?php 
-use MavenAlgolia\Admin\Controllers\Settings; 
-use MavenAlgolia\Core; 
+<?php
+
+use MavenAlgolia\Admin\Controllers\Settings;
+use MavenAlgolia\Core;
+
 $registry = Core\Registry::instance();
-$langDomain =   $registry->getPluginShortName();
+$langDomain = $registry->getPluginShortName();
 ?>
 <div class="wrap">
 	<div id="icon-options-general" class="icon32"><br></div>
-	<h2>Maven Algolia Settings</h2>	
+	<h2>Maven Algolia Settings</h2>
 	<form action="" method="post">
-		<input type="hidden" value="<?php echo Settings::updateAction; ?>" name="mvnAlg_action">
-		<?php wp_nonce_field( Settings::updateAction ); ?>
-		<table style="width: 100%">
-			<tr>
-				<td style="width:45%; vertical-align: top;">
-					<table class="widefat">
-						<thead>
-							<tr>
-								<th class="row-title" colspan="2"><strong><?php esc_html_e( 'Configure your App Credentials', $langDomain ); ?></strong></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr valign="top">
-								<th scope="row"><label for="mvnAlg_appId"><?php esc_html_e( 'APP ID', $langDomain ); ?></label></th>
-								<td><input type="text" class="regular-text" value="<?php echo esc_attr(  $registry->getAppId() ); ?>" id="mvnAlg_appId" name="<?php echo Settings::settingsField; ?>[appId]"></td>
-							</tr>
-							<tr valign="top">
-								<th scope="row"><label for="mvnAlg_apiKey"><?php esc_html_e( 'API Key', $langDomain ); ?></label></th>
-								<td><input type="text" class="regular-text" value="<?php echo esc_attr(  $registry->getApiKey() ); ?>" id="mvnAlg_apiKey" name="<?php echo Settings::settingsField; ?>[apiKey]"></td>
-							</tr>
-							<tr valign="top">
-								<th scope="row"><label for="mvnAlg_apiKeySearch"><?php esc_html_e( 'API Key for Search Only', $langDomain ); ?></label></th>
-								<td><input type="text" class="regular-text" value="<?php echo esc_attr(  $registry->getApiKeySearch() ); ?>" id="mvnAlg_apiKeySearch" name="<?php echo Settings::settingsField; ?>[apiKeySearch]"></td>
-							</tr>
-							<tr>
-								<td>
-									<p class="submit"><input type="submit" value="<?php esc_attr_e( 'Save Changes', $langDomain ); ?>" class="button button-primary" id="submit" name="submit"></p>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+		<div id="mvnAlgtabs">
+			<ul>
+				<li><a class="nav-tab nav-tab-active" href="#tab-general"><?php esc_html_e('Account', $langDomain); ?></a></li>
+				<li><a class="nav-tab" href="#tab-customization"><?php esc_html_e('Cutomization', $langDomain); ?></a></li>
+			</ul>
+			<div id="tab-customization" style="width: 100%">
+				<table class="wrap">
+					<tbody>
+						<tr>
+							<td style="width: 45%" valign="top">
+								<table class="widefat">
+									<thead>
+										<tr>
+											<th class="row-title" colspan="2"><strong><?php esc_html_e('Taxonomies', $langDomain); ?></strong></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr valign="top">
+											<td>
+												<label for="mvnAlg_indexTaxonomies"><?php esc_html_e('Check if you want to index taxonomies', $langDomain); ?></label>
+												<input type="hidden" value="0" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
+												<input type="checkbox" class="checkbox" <?php checked($registry->indexTaxonomies()); ?> value="1" id="mvnAlg_indexTaxonomies" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
+											</td>
+										</tr>
+										<tr valign="top">
+											<th scope="row">
+												<?php esc_html_e('This is the list of Taxonomies that would be indexed, please remember that each taxonomy will have its own index name and they will appear separately in the "suggestions search" popup.', $langDomain); ?><br>
+												<ul><?php
+													$taxonomiesToIndex = Core\FieldsHelper::getTaxonomyObjects();
+													if ($taxonomiesToIndex):
+														$taxonomiesLabels = Core\FieldsHelper::getTaxonomyLabels();
+														foreach ($taxonomiesToIndex as $taxKey => $tax) :
+															?>
+															<li><?php echo sprintf('<strong>%s</strong>: %s <br> <strong>%s</strong>: %s', __('Taxonomy'), $taxonomiesLabels[$taxKey], __('Index Name'), $tax->getIndexName()); ?></li>
+															<?php
+														endforeach;
+													endif;
+													?>
+												</ul>
+											</th>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+							<td style="width: 45%" valign="top">
+								<table class="widefat">
+									<thead>
+										<tr>
+											<th class="row-title" colspan="2"><strong><?php esc_html_e('General', $langDomain); ?></strong></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr valign="top">
+											<td>
+												<label for="mvnAlg_showThumbInPopup"><?php esc_html_e('Show Thumbnails in search results', $langDomain); ?></label>
+											</td>
+											<td>
+												<input type="hidden" value="0" name="<?php echo Settings::settingsField; ?>[showThumbInPopup]">
+												<input type="checkbox" class="checkbox" <?php checked($registry->showThumbInPopup()); ?> value="1" id="mvnAlg_showThumbInPopup" name="<?php echo Settings::settingsField; ?>[showThumbInPopup]">
+											</td>
+										</tr>
+										<tr id="thumbSizes">
+											<td>
+												<?php esc_html_e('Width:', $langDomain); ?>
+												<br>
+												<?php esc_html_e('Height:', $langDomain); ?>
+											</td>
+											<td>
+												<?php 
+												$popupThumbArgs = $registry->getPopupThumbnailArgs();
+												?>
+												<input type="text" class="" value="<?php echo esc_attr($popupThumbArgs['w']); ?>" id="mvnAlg_popupThumbWidth" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][w]">
+												<br>
+												<input type="text" class="" value="<?php echo esc_attr($popupThumbArgs['h']); ?>" id="mvnAlg_popupThumbHeight" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][h]">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
 
-					<?php if ( Core\UtilsAlgolia::readyToIndex() ): ?>
-					<table class="widefat" style="margin-top: 30px; ">
+						<tr>
+							<td>
+								<p class="submit"><input type="submit" value="<?php esc_attr_e('Save Changes', $langDomain); ?>" class="button button-primary" id="submit" name="submit"></p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div id="tab-general">
+				<input type="hidden" value="<?php echo Settings::updateAction; ?>" name="mvnAlg_action">
+				<?php wp_nonce_field(Settings::updateAction); ?>
+				<table style="width: 50%" class="widefat">
+					<thead>
+						<tr>
+							<th class="row-title" colspan="2"><strong><?php esc_html_e('Configure your App Credentials', $langDomain); ?></strong></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr valign="top">
+							<th scope="row"><label for="mvnAlg_appId"><?php esc_html_e('APP ID', $langDomain); ?></label></th>
+							<td><input type="text" class="regular-text" value="<?php echo esc_attr($registry->getAppId()); ?>" id="mvnAlg_appId" name="<?php echo Settings::settingsField; ?>[appId]"></td>
+						</tr>
+						<tr valign="top">
+							<th scope="row"><label for="mvnAlg_apiKey"><?php esc_html_e('API Key', $langDomain); ?></label></th>
+							<td><input type="text" class="regular-text" value="<?php echo esc_attr($registry->getApiKey()); ?>" id="mvnAlg_apiKey" name="<?php echo Settings::settingsField; ?>[apiKey]"></td>
+						</tr>
+						<tr valign="top">
+							<th scope="row"><label for="mvnAlg_apiKeySearch"><?php esc_html_e('API Key for Search Only', $langDomain); ?></label></th>
+							<td><input type="text" class="regular-text" value="<?php echo esc_attr($registry->getApiKeySearch()); ?>" id="mvnAlg_apiKeySearch" name="<?php echo Settings::settingsField; ?>[apiKeySearch]"></td>
+						</tr>
+						<tr>
+							<td>
+								<p class="submit"><input type="submit" value="<?php esc_attr_e('Save Changes', $langDomain); ?>" class="button button-primary" id="submit" name="submit"></p>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<?php if (Core\UtilsAlgolia::readyToIndex()): ?>
+					<table class="widefat" style="margin-top: 30px; width: 50%; ">
 						<thead>
 							<tr>
-								<th class="row-title" colspan="2"><strong><?php esc_html_e( 'Index Content', $langDomain ); ?></strong></th>
+								<th class="row-title" colspan="2"><strong><?php esc_html_e('Index Content', $langDomain); ?></strong></th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr valign="top">
-								<th scope="row"><label for="mvnAlg_defaultIndex"><?php esc_html_e( 'Index Name', $langDomain ); ?></label></th>
-								<td><input type="text" class="regular-text" value="<?php echo esc_attr(  $registry->getDefaultIndex() ); ?>" id="mvnAlg_defaultIndex" name="<?php echo Settings::settingsField; ?>[defaultIndex]"></td>
+								<th scope="row"><label for="mvnAlg_defaultIndex"><?php esc_html_e('Index Name', $langDomain); ?></label></th>
+								<td><input type="text" class="regular-text" value="<?php echo esc_attr($registry->getDefaultIndex()); ?>" id="mvnAlg_defaultIndex" name="<?php echo Settings::settingsField; ?>[defaultIndex]"></td>
 							</tr>
-							<?php if ( $registry->getDefaultIndex() ): ?>
+							<?php if ($registry->getDefaultIndex()): ?>
 
 								<tr valign="top" class="index-action-row index-action-button">
-									<th scope="row"><label for="mvnAlg_index"><?php esc_html_e( 'Click to index content', $langDomain ); ?></label></th>
+									<th scope="row"><label for="mvnAlg_index"><?php esc_html_e('Click to index content', $langDomain); ?></label></th>
 									<td>
 										<div class="algolia-action-button" style="width:50%;">
-											<button type="button" class="button button-secondary"  id="mvnAlg_index" name="mvnAlg_index"><?php esc_html_e( 'Index Content', $langDomain ); ?></button>
+											<button type="button" class="button button-secondary"  id="mvnAlg_index" name="mvnAlg_index"><?php esc_html_e('Index Content', $langDomain); ?></button>
 											<span class="spinner algolia-index-spinner"></span>
 										</div>
 									</td>
@@ -73,61 +162,19 @@ $langDomain =   $registry->getPluginShortName();
 							<?php else: ?>
 								<tr>
 									<td colspan="2">
-										<p><?php _e( 'Please set an "Index Name" and then update the settings to start indexing content.', $langDomain ) ?></p>
+										<p><?php _e('Please set an "Index Name" and then update the settings to start indexing content.', $langDomain) ?></p>
 									</td>
 								</tr>
 							<?php endif; ?>
-								<tr>
-									<td>
-										<p class="submit"><input type="submit" value="<?php esc_attr_e( 'Save Changes', $langDomain ); ?>" class="button button-primary" id="submit" name="submit"></p>
-									</td>
-								</tr>
-						</tbody>
-					</table>
-					<?php endif; ?>
-				</td>
-				<td style="width: 45%; vertical-align: top;">
-					<table class="widefat">
-						<thead>
-							<tr>
-								<th class="row-title" colspan="2"><strong><?php esc_html_e( 'Customization', $langDomain ); ?></strong></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr valign="top">
-								<td>
-									<label for="mvnAlg_indexTaxonomies"><?php esc_html_e( 'Check if you want to index taxonomies', $langDomain ); ?></label>
-									<input type="hidden" value="0" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
-									<input type="checkbox" class="checkbox" <?php checked( $registry->indexTaxonomies() ); ?> value="1" id="mvnAlg_indexTaxonomies" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
-								</td>
-							</tr>
-							<tr valign="top">
-								<th scope="row">
-									<?php esc_html_e( 'This is the list of Taxonomies that would be indexed, please remember that each taxonomy will have its own index name and they will appear separately in the "suggestions search" popup.', $langDomain ); ?><br>
-									<ul><?php 
-									$taxonomiesToIndex = Core\FieldsHelper::getTaxonomyObjects();
-									if( $taxonomiesToIndex ):
-										$taxonomiesLabels = Core\FieldsHelper::getTaxonomyLabels();
-										foreach ( $taxonomiesToIndex as $taxKey => $tax ) :
-									?>
-										<li><?php echo sprintf( '<strong>%s</strong>: %s <br> <strong>%s</strong>: %s', __('Taxonomy'), $taxonomiesLabels[$taxKey], __('Index Name'), $tax->getIndexName() ); ?></li>
-									<?php 
-										endforeach; 
-									endif; 
-									?>
-									</ul>
-								</td>
-							</tr>
 							<tr>
 								<td>
-									<p class="submit"><input type="submit" value="<?php esc_attr_e( 'Save Changes', $langDomain ); ?>" class="button button-primary" id="submit" name="submit"></p>
+									<p class="submit"><input type="submit" value="<?php esc_attr_e('Save Changes', $langDomain); ?>" class="button button-primary" id="submit" name="submit"></p>
 								</td>
 							</tr>
 						</tbody>
 					</table>
-				</td>
-			</tr>
-		</table>
-		
-		</form>
+				<?php endif; ?>
+			</div>
+		</div>
+	</form>
 </div>

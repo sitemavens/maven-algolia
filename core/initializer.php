@@ -36,6 +36,8 @@ class Initializer  {
 					'indexName' => Registry::instance()->getDefaultIndex(),
 					'showExcerpt' => 0, // Should be an Integer 0 | 1
 					'indexTaxonomies' => (int)Registry::instance()->indexTaxonomies(), // Should be an Integer 0 | 1
+					'showThumbInPopup' => (int)Registry::instance()->showThumbInPopup(), // Should be an Integer 0 | 1
+					'popupThumbnailArgs' => (Registry::instance()->showThumbInPopup()) ? Registry::instance()->getPopupThumbnailArgs() : array(),
 					'taxonomiesToIndex' => (Registry::instance()->indexTaxonomies()) ? FieldsHelper::getTaxonomiesToIndex() : array(),
 					'labels' => array( 'taxonomies' => FieldsHelper::getTaxonomyLabels(), 'posts' => __('Posts') )
 				);

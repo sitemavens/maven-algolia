@@ -322,3 +322,41 @@
 	font-weight: bold;
 	text-shadow: 1px 1px 0 #fff;
 }
+
+#mvnAlgtabs.ui-widget-content {
+	border: none;
+	background: none;
+	color: #222222;
+}
+#mvnAlgtabs .ui-tabs-panel {
+	background: #FFF;
+	border: 1px solid #CCC;
+}
+#mvnAlgtabs .ui-widget-header {
+    background: none;
+    border: none;
+    color: #FFFFFF;
+}
+#mvnAlgtabs .ui-state-default {
+    background: #EEE;
+	border-color: #CCC;
+}
+#mvnAlgtabs .ui-state-active {
+    background: #FFF;
+    border-color: #CCC;
+}
+#mvnAlgtabs .ui-state-default a, #mvnAlgtabs .ui-state-default a:link, #mvnAlgtabs .ui-state-default a:visited{
+	font-weight: normal;
+	font-size: 14px;
+}
+#mvnAlgtabs .ui-state-active a, #mvnAlgtabs .ui-state-active a:link, #mvnAlgtabs .ui-state-active a:visited{
+	font-weight: bold;
+}
+#mvnAlgtabs .nav-tab {
+    background: none;
+	border: none;
+}
+#mvnAlgtabs .nav-tab-active, #mvnAlgtabs .nav-tab-active:hover {
+    background: none;
+    border: none;
+}

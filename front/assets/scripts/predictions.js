@@ -74,23 +74,31 @@ var mvnAlgoliaPrediction = (function($) {
 		},
 		getDisplayPost: function( hit ) {
 			var htmlPost = '';
-			htmlPost += '			<a href="' + hit.permalink + '" class="mvn-alg-ls-item-title">';
-			htmlPost += '				<strong>' + hit.title + '</strong>';
+			htmlPost += '	<a href="' + hit.permalink + '" class="mvn-alg-item-link">';
+			if( mvnAlgSettings.showThumbInPopup && typeof hit.featuredImage !== 'undefined' && hit.featuredImage ){
+				var imgW = mvnAlgSettings.popupThumbnailArgs.w;
+				var imgH = mvnAlgSettings.popupThumbnailArgs.h;
+				htmlPost += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="'+hit.featuredImage+'" width="'+imgW+'" height="'+imgH+'" /></span>';
+			}
+			
+			htmlPost += '		<strong>' + hit.title + '</strong>';
 
 			if( typeof hit.categories !== 'undefined' ){
-				htmlPost += '			<br /><span class="mvn-alg-ls-item-cats">' + hit.categories.join() + '</span>';
+				htmlPost += '		<br /><span class="mvn-alg-item-cats">' + hit.categories.join() + '</span>';
 			}
 			if( mvnAlgSettings.showExcerpt && typeof hit.excerpt !== 'undefined' && hit.excerpt ){
-				htmlPost += '			<br /><span class="mvn-alg-ls-item-desc">' + hit.excerpt + '</span>';
+				htmlPost += '		<br /><span class="mvn-alg-item-desc">' + hit.excerpt + '</span>';
 			}
-			htmlPost += '			</a>';
+			htmlPost += '	</a>';
 			return htmlPost;
 		},
 		getDisplayTerm: function( hit ) {
 			var html = '';
-			html += '<a href="' + hit.permalink + '" class="mvn-alg-ls-item-title">';
-			if( typeof hit.featuredImage !== 'undefined' && hit.featuredImage ){
-				html += '	<img src="'+hit.featuredImage+'" width="40" height="60" />';
+			html += '<a href="' + hit.permalink + '" class="mvn-alg-item-link">';
+			if( mvnAlgSettings.showThumbInPopup && typeof hit.featuredImage !== 'undefined' && hit.featuredImage ){
+				var imgW = mvnAlgSettings.popupThumbnailArgs.w;
+				var imgH = mvnAlgSettings.popupThumbnailArgs.h;
+				html += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="'+hit.featuredImage+'" width="'+imgW+'" height="'+imgH+'" /></span>';
 			}
 			html += '		<strong>' + hit.title + '</strong>';
 			html += '</a>';

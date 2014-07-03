@@ -397,6 +397,8 @@ function getTaxonomyTypeToIndex( index ){
 	
 	$(document).ready(function(){
 		
+		jQuery("#mvnAlgtabs").tabs();
+		
 		jQuery('#mvnAlg_validate' ).on('click', function(e){
 			validateCredentials();
 			jQuery('.algolia-validate-spinner').show();

@@ -68,6 +68,7 @@ class Settings {
 			$csspath = Registry::instance()->getPluginUrl() . "admin/assets/styles/settings.css";
 
 			wp_enqueue_script( 'jquery-ui-progressbar' );
+			wp_enqueue_script( 'jquery-ui-tabs' );
 			wp_enqueue_script( 'mavenAlgoliaSettings', $jspath, array( 'jquery', 'jquery-ui-progressbar' ), Registry::instance()->getPluginVersion() );
 			wp_enqueue_style( 'jquery-ui' );
 			wp_enqueue_style( 'mavenAlgoliaSettings', $csspath, array(), Registry::instance()->getPluginVersion() );
@@ -465,7 +466,11 @@ class Settings {
 				continue;
 			}
 
-			$options[$option] = sanitize_text_field( $_POST[self::settingsField][ $option ] );
+			if( is_array( $_POST[self::settingsField][ $option ] ) ){
+				$options[$option] = array_map( 'sanitize_text_field', $_POST[self::settingsField][ $option ] );
+			}else{
+				$options[$option] = sanitize_text_field( $_POST[self::settingsField][ $option ] );
+			}
 		}
 
 		// If there is an apiKey and an appID validate them

@@ -37,6 +37,8 @@ class Registry{
 				'appValid' => '0',
 				'appSearchValid' => '0',
 				'indexTaxonomies' => '0',
+				'showThumbInPopup' => '0',
+				'popupThumbnailArgs' => array('w' => 20, 'h' => 40),
 			);
 			
 			self::$instance = new self( );
@@ -276,6 +278,14 @@ class Registry{
 	
 	public function indexTaxonomies( ) {
 		return (bool)$this->getValue('indexTaxonomies');
+	}
+	
+	public function showThumbInPopup( ) {
+		return (bool)$this->getValue('showThumbInPopup');
+	}
+	
+	public function getPopupThumbnailArgs( ) {
+		return $this->getValue('popupThumbnailArgs');
 	}
 	
 } 
