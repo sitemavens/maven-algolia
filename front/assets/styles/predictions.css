@@ -151,3 +151,17 @@
 #search-form #text.ui-autocomplete-loading {
 	background: #FFFFFF url('ui-anim_basic_16x16.gif') right center no-repeat !important;
 }
+.mvn-alg-item-title{
+	font-weight: bold;
+	display: inline-block;
+}
+.mvn-alg-cat-title{
+	font-weight: bold;
+	display: inline-block;
+}
+.mvn-alg-item-cats{
+	display: inline-block;
+}
+.mvn-alg-item-desc{
+	display: inline-block;
+}

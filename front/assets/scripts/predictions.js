@@ -84,13 +84,13 @@ var mvnAlgoliaPrediction = (function($) {
 				}
 			}
 			
-			htmlPost += '		<strong>' + hit.title + '</strong>';
+			htmlPost += '		<span class="mvn-alg-item-title">' + hit.title + '</span>';
 
 			if( typeof hit.categories !== 'undefined' ){
-				htmlPost += '		<br /><span class="mvn-alg-item-cats">' + hit.categories.join() + '</span>';
+				htmlPost += '		<span class="mvn-alg-item-cats">' + hit.categories.join() + '</span>';
 			}
 			if( mvnAlgSettings.showExcerpt && typeof hit.excerpt !== 'undefined' && hit.excerpt ){
-				htmlPost += '		<br /><span class="mvn-alg-item-desc">' + hit.excerpt + '</span>';
+				htmlPost += '		<span class="mvn-alg-item-desc">' + hit.excerpt + '</span>';
 			}
 			htmlPost += '	</a>';
 			return htmlPost;
@@ -103,10 +103,10 @@ var mvnAlgoliaPrediction = (function($) {
 				if( imgSrc ){
 					var imgW = mvnAlgSettings.popupThumbnailArgs.w;
 					var imgH = mvnAlgSettings.popupThumbnailArgs.h;
-					htmlPost += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="'+imgSrc+'" width="'+imgW+'" height="'+imgH+'" /></span>';
+					htmlPost += '		<span class="mvn-alg-cat-thumbnail"><img class="mvn-alg-cat-thumbnail-img" src="'+imgSrc+'" width="'+imgW+'" height="'+imgH+'" /></span>';
 				}
 			}
-			html += '		<strong>' + hit.title + '</strong>';
+			html += '		<span class="mvn-alg-cat-title">' + hit.title + '</span>';
 			html += '</a>';
 			return html;
 		},
@@ -176,10 +176,12 @@ jQuery(document).ready(function($) {
 			var itemHtml = '';
 			if( typeof item.taxonomy !== 'undefined' ){
 				itemHtml = mvnAlgoliaPrediction.getDisplayTerm(item);
+			return $("<li class='mvn-alg-cat'></li>").data("item.autocomplete", item).append(itemHtml).appendTo(ul);				
 			}else{
 				itemHtml = mvnAlgoliaPrediction.getDisplayPost(item);
+				return $("<li class='mvn-alg-item'></li>").data("item.autocomplete", item).append(itemHtml).appendTo(ul);
+
 			}
-			return $("<li></li>").data("item.autocomplete", item).append(itemHtml).appendTo(ul);
 		};
 		// Render menu just if index taxonomies is enabled
 		if( typeof mvnAlgSettings.indexTaxonomies !== 'undefined' && mvnAlgSettings.indexTaxonomies > 0 && typeof mvnAlgSettings.taxonomiesToIndex !== 'undefined' ){
