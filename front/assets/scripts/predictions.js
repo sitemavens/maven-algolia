@@ -76,9 +76,12 @@ var mvnAlgoliaPrediction = (function($) {
 			var htmlPost = '';
 			htmlPost += '	<a href="' + hit.permalink + '" class="mvn-alg-item-link">';
 			if( mvnAlgSettings.showThumbInPopup && typeof hit.featuredImage !== 'undefined' && hit.featuredImage ){
-				var imgW = mvnAlgSettings.popupThumbnailArgs.w;
-				var imgH = mvnAlgSettings.popupThumbnailArgs.h;
-				htmlPost += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="'+hit.featuredImage+'" width="'+imgW+'" height="'+imgH+'" /></span>';
+				var imgSrc = self.getThumbnailSrc( hit.featuredImage, 'thumbnail' );
+				if( imgSrc ){
+					var imgW = mvnAlgSettings.popupThumbnailArgs.w;
+					var imgH = mvnAlgSettings.popupThumbnailArgs.h;
+					htmlPost += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="'+imgSrc+'" width="'+imgW+'" height="'+imgH+'" /></span>';
+				}
 			}
 			
 			htmlPost += '		<strong>' + hit.title + '</strong>';
@@ -94,15 +97,25 @@ var mvnAlgoliaPrediction = (function($) {
 		},
 		getDisplayTerm: function( hit ) {
 			var html = '';
-			html += '<a href="' + hit.permalink + '" class="mvn-alg-item-link">';
+			html += '<a href="' + hit.permalink + '" class="mvn-alg-cat-link">';
 			if( mvnAlgSettings.showThumbInPopup && typeof hit.featuredImage !== 'undefined' && hit.featuredImage ){
-				var imgW = mvnAlgSettings.popupThumbnailArgs.w;
-				var imgH = mvnAlgSettings.popupThumbnailArgs.h;
-				html += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="'+hit.featuredImage+'" width="'+imgW+'" height="'+imgH+'" /></span>';
+				var imgSrc = self.getThumbnailSrc( hit.featuredImage, 'thumbnail' );
+				if( imgSrc ){
+					var imgW = mvnAlgSettings.popupThumbnailArgs.w;
+					var imgH = mvnAlgSettings.popupThumbnailArgs.h;
+					htmlPost += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="'+imgSrc+'" width="'+imgW+'" height="'+imgH+'" /></span>';
+				}
 			}
 			html += '		<strong>' + hit.title + '</strong>';
 			html += '</a>';
 			return html;
+		},
+		getThumbnailSrc: function( thumbnail, size ) {
+			var src = '';
+			if( thumbnail && typeof thumbnail.sizes !== 'undefined' && typeof thumbnail.sizes[size] !== 'undefined' && thumbnail.sizes[size].file ){
+				src = thumbnail.sizes[size].file;
+			}
+			return src;
 		},
 		search: function( request, response ) {
 			if( typeof algolia !== 'undefined' ){
