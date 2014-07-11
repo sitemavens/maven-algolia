@@ -53,6 +53,8 @@ Then save the changes.
 
 ## Configure your index
 
+![Maven Settings](http://www.sitemavens.com/wp-content/uploads/2014/07/maven-algolia-settings.png)
+
 After indexing all the content you might want to configure your index to offer better results to your visitors. You can do it going to “Indexes” (https://www.algolia.com/explorer) section inside algolia, selecting your index and then going to the “Settings” tab.
 
 
