@@ -68,7 +68,7 @@ It is important to know that if you enable this option you will need to run the 
 General
 There are some option you have to customize the search results.
 
-* Show Post Categories in search results: it lets you show or hide the post categories in search results. Post categories will be shown separated by “comma (,)”.
+- Show Post Categories in search results: it lets you show or hide the post categories in search results. Post categories will be shown separated by “comma (,)”.
 Default value is “disabled”
 
 * Show Excerpt in search results: it permits to show or hide the post excerpt in search results.Default value is “disabled”
@@ -84,3 +84,35 @@ Default value is “20”
 
 * Thumbnail Height: it permits to set the height value for the thumbnail in search results.
 Default value is “40”
+
+
+## Front end, simple result styles structure
+
+```
+<ul class="ui-autocomplete ui-front ui-menu ui-widget ui-widget-content ui-corner-all">
+<li class="ui-autocomplete-category">
+    <span>Posts</span>
+</li>
+    <li class="mvn-alg-item ui-menu-item">
+   	 <a class="mvn-alg-item-link ui-corner-all" href="{POST_URL}">
+   		 <span class="mvn-alg-item-thumbnail"> 
+   			 <img width="{SETTINGS_WIDTH}" height="{SETTINGS_HEIGHT}" src="{THUMBNAIL_URL}" class="mvn-alg-item-thumbnail-img">
+   		 </span>
+   		 <span class="mvn-alg-item-title">{POST_TITLE} <em>{PART_OF_TITLE_FOUND}</em>.</span> 
+   		 <span class="mvn-alg-item-excerpt">{POST_EXCERPT}</span> 
+   	 </a>
+    </li>
+<li class="ui-autocomplete-category">
+	<span>Categories</span>
+</li>
+<li class="mvn-alg-cat ui-menu-item">
+	<a class="mvn-alg-cat-link ui-corner-all" href="{CATEGORY_URL}">
+    	<span class="mvn-alg-cat-title">
+        	{CATEGORY_TITLE}<em>{PART_OF_TITLE_FOUND}</em>
+    	</span>
+	</a>
+</li>
+</ul>
+
+```
+
