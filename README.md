@@ -116,3 +116,9 @@ Default value is “40”
 
 ```
 
+## Table of css classes
+
+Element | Tag | CSS Classes
+--- | --- | ---
+Structure container | ul | .ui-autocomplete .ui-menu ui-widget
+Structure item | li | .ui-menu .ui-menu-item .mvn-alg-item
