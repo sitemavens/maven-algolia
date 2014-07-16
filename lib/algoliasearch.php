@@ -159,6 +159,11 @@ class Client {
             } else {
                 throw new \Exception('indexName is mandatory');
             }
+            foreach ($query as $key => $value) {
+              if (gettype($value) == "array") {
+                $query[$key] = json_encode($value);
+              }
+            }
             $req = array("indexName" => $indexes, "params" => http_build_query($query));
             array_push($requests, $req);
         }
@@ -222,7 +227,7 @@ class Client {
      * @param indexName the name of index
      */
     public function initIndex($indexName) {
-        return new Index($this->context, $indexName);
+        return new Index($this->context, $this, $indexName);
     }
 
     /*
@@ -323,8 +328,9 @@ class Index {
     /*
      * Index initialization (You should not call this initialized yourself)
      */
-    public function __construct($context, $indexName) {
+    public function __construct($context, $client, $indexName) {
         $this->context = $context;
+        $this->client = $client;
         $this->indexName = $indexName;
         $this->urlIndexName = urlencode($indexName);
     }
@@ -402,13 +408,30 @@ class Index {
     }
 
     /*
+     * Get several objects from this index
+     *
+     * @param objectIDs the array of unique identifier of objects to retrieve
+     */
+    public function getObjects($objectIDs) {
+        if ($objectIDs == null) {
+            throw new \Exception('No list of objectID provided');
+        }
+        $requests = array();
+        foreach ($objectIDs as $object) {            
+            $req = array("indexName" => $this->indexName, "objectID" => $object);
+            array_push($requests, $req);
+        }
+        return AlgoliaUtils_request($this->context, "POST", "/1/indexes/*/objects", array(), array("requests" => $requests));
+   }
+
+    /*
      * Update partially an object (only update attributes passed in argument)
      *
      * @param partialObject contains the object attributes to override, the
      *  object must contains an objectID attribute
      */
-    public function partialUpdateObject($partialObject) {
-        return AlgoliaUtils_request($this->context, "POST", "/1/indexes/" . $this->urlIndexName . "/" . urlencode($partialObject["objectID"]) . "/partial", array(), $partialObject);
+    public function partialUpdateObject($partialObject, $createIfNotExists = true) {
+        return AlgoliaUtils_request($this->context, "POST", "/1/indexes/" . $this->urlIndexName . "/" . urlencode($partialObject["objectID"]) . "/partial" . ($createIfNotExists ? "" : "?createIfNotExists=false"), array(), $partialObject);
     }
 
     /*
@@ -416,8 +439,12 @@ class Index {
      *
      * @param objects contains an array of objects to update (each object must contains a objectID attribute)
      */
-    public function partialUpdateObjects($objects, $objectIDKey = "objectID") {
-        $requests = $this->buildBatch("partialUpdateObject", $objects, true, $objectIDKey);
+    public function partialUpdateObjects($objects, $objectIDKey = "objectID", $createIfNotExists = true) {
+        if ($createIfNotExists) {
+           $requests = $this->buildBatch("partialUpdateObject", $objects, true, $objectIDKey);
+        } else {
+            $requests = $this->buildBatch("partialUpdateObjectNoCreate", $objects, true, $objectIDKey);
+	}
         return $this->batch($requests);
     }
 
@@ -464,6 +491,27 @@ class Index {
         }
         $requests = $this->buildBatch("deleteObject", $objectIDs, true);
         return $this->batch($requests);
+    }
+
+    /*
+     * Delete all objects matching a query
+     *
+     * @param query the query string
+     * @param params the optional query parameters
+     */
+    public function deleteByQuery($query, $args = array()) {
+      $params["attributeToRetrieve"] = array('objectID');
+      $params["hitsPerPage"] = 1000;
+      $results = $this->search($query, $args);
+      while ($results['nbHits'] != 0) {
+        $objectIDs = array();
+        foreach ($results['hits'] as $elt) {
+          array_push($objectIDs, $elt['objectID']);
+        }
+        $res = $this->deleteObjects($objectIDs);
+        $this->waitTask($res['taskID']);
+        $results = $this->search($query, $args);
+      }
     }
 
     /*
@@ -535,6 +583,93 @@ class Index {
         }
         $args["query"] = $query;
         return AlgoliaUtils_request($this->context, "GET", "/1/indexes/" . $this->urlIndexName, $args);
+    }
+
+    /*
+     * Perform a search with disjunctive facets generating as many queries as number of disjunctive facets
+     *
+     * @param query the query
+     * @param disjunctive_facets the array of disjunctive facets
+     * @param params a hash representing the regular query parameters
+     * @param refinements a hash ("string" -> ["array", "of", "refined", "values"]) representing the current refinements
+     * ex: { "my_facet1" => ["my_value1", ["my_value2"], "my_disjunctive_facet1" => ["my_value1", "my_value2"] }
+     */
+    public function searchDisjunctiveFaceting($query, $disjunctive_facets, $params = array(), $refinements = array()) {
+      if (gettype($disjunctive_facets) != "string" && gettype($disjunctive_facets) != "array") {
+        throw new AlgoliaException("Argument \"disjunctive_facets\" must be a String or an Array");
+      }
+      if (gettype($refinements) != "array") {
+        throw new AlgoliaException("Argument \"refinements\" must be a Hash of Arrays");
+      }
+
+      if (gettype($disjunctive_facets) == "string") {
+        $disjunctive_facets = split(",", $disjunctive_facets);
+      }
+
+      $disjunctive_refinements = array();
+      foreach ($refinements as $key => $value) {
+        if (in_array($key, $disjunctive_facets)) {
+          $disjunctive_refinements[$key] = $value;
+        }
+      }
+      $queries = array();
+      $filters = array();
+
+      foreach ($refinements as $key => $value) {
+        $r = array_map(function ($val) use ($key) { return $key . ":" . $val;}, $value);
+
+        if (in_array($key, $disjunctive_refinements)) {
+          $filter = array_merge($filters, $r);
+        } else {
+          array_push($filters, $r);
+        }
+      }
+      $params["indexName"] = $this->indexName;
+      $params["query"] = $query;
+      $params["facetFilters"] = $filters;
+      array_push($queries, $params);
+      foreach ($disjunctive_facets as $disjunctive_facet) {
+        $filters = array();
+        foreach ($refinements as $key => $value) {
+          if ($key != $disjunctive_facet) {
+            $r = array_map(function($val) use($key) { return $key . ":" . $val;}, $value);
+
+            if (in_array($key, $disjunctive_refinements)) {
+              $filter = array_merge($filters, $r);
+            } else {
+              array_push($filters, $r);
+            }
+          }
+        }
+        $params["indexName"] = $this->indexName;
+        $params["query"] = $query;
+        $params["facetFilters"] = $filters;
+        $params["page"] = 0;
+        $params["hitsPerPage"] = 1;
+        $params["attributesToRetrieve"] = array();
+        $params["attributesToHighlight"] = array();
+        $params["attributesToSnippet"] = array();
+        $params["facets"] = $disjunctive_facet;
+        array_push($queries, $params);
+      }
+      $answers = $this->client->multipleQueries($queries);
+
+      $aggregated_answer = $answers['results'][0];
+      $aggregated_answer['disjunctiveFacets'] = array();
+      for ($i = 1; $i < count($answers['results']); $i++) {
+        foreach ($answers['results'][$i]['facets'] as $key => $facet) {
+          $aggregated_answer['disjunctiveFacets'][$key] = $facet;
+          if (!in_array($key, $disjunctive_refinements)) {
+            continue;
+          }
+          foreach ($disjunctive_refinements[$key] as $r) {
+            if (is_null($aggregated_answer['disjunctiveFacets'][$key][$r])) {
+              $aggregated_answer['disjunctiveFacets'][$key][$r] = 0;
+            }
+          }
+        }
+      }
+      return $aggregated_answer;
     }
 
     /*
@@ -707,6 +842,7 @@ class Index {
     }
 
     private $indexName;
+    private $client;
     private $urlIndexName;
     private $hostsArray;
     private $curlHandle;
@@ -733,7 +869,6 @@ function AlgoliaUtils_request($context, $method, $path, $params = array(), $data
 
 function AlgoliaUtils_requestHost($context, $method, $host, $path, $params, $data) {
     $url = "https://" . $host . $path;
-//echo $url;
     if ($params != null && count($params) > 0) {
         $params2 = array();
         foreach ($params as $key => $val) {
@@ -746,7 +881,6 @@ function AlgoliaUtils_requestHost($context, $method, $host, $path, $params, $dat
         $url .= "?" . http_build_query($params2);
         
     }
-//echo $url;
     // initialize curl library
     $curlHandle = curl_init();
     //curl_setopt($curlHandle, CURLOPT_VERBOSE, true);
@@ -799,38 +933,24 @@ function AlgoliaUtils_requestHost($context, $method, $host, $path, $params, $dat
     }
     $mhandle = $context->getMHandle($curlHandle);
 
-    $response = NULL;
     // Do all the processing.
-    $active = NULL;
-
-    $mrc = curl_multi_exec($mhandle, $active);
-    while ($mrc == CURLM_CALL_MULTI_PERFORM) {
+    $running = null;
+    do {
+        curl_multi_exec($mhandle, $running);
+        curl_multi_select($mhandle);
         usleep(100);
-        $mrc = curl_multi_exec($mhandle, $active);
-    }
-    while ($active && $mrc == CURLM_OK) {
-        $select = curl_multi_select($mhandle);
-        if ($select != -1 || $select != 0) {
-            do {
-                $mrc = curl_multi_exec($mhandle, $active);
-            } while ($mrc == CURLM_CALL_MULTI_PERFORM);
-        } elseif ($select == 0) { //Nothing to do stop
-            break;
-        }
-        usleep(100);
-    }
-
-
-    if ($response === false) {
-        throw new \Exception(curl_error($curlHandle));
-    }
+    } while ($running > 0);
     $http_status = (int)curl_getinfo($curlHandle, CURLINFO_HTTP_CODE);
-
+    $response = curl_multi_getcontent($curlHandle);
+    $error = curl_error($curlHandle);
+    if (!empty($error)) {
+        throw new \Exception($error);
+    }
     if ($http_status === 0 || $http_status === 503) {
         // Could not reach host or service unavailable, try with another one if we have it
         return null;
     }
-    $response = curl_multi_getcontent($curlHandle);
+
     $answer = json_decode($response, true);
     $context->releaseMHandle($curlHandle);
     curl_close($curlHandle);
@@ -845,7 +965,7 @@ function AlgoliaUtils_requestHost($context, $method, $host, $path, $params, $dat
         throw new AlgoliaException(isset($answer['message']) ? $answer['message'] : "Resource does not exist");
     }
     elseif ($http_status != 200 && $http_status != 201) {
-        throw new Exception($http_status . ": " . $response);
+        throw new \Exception($http_status . ": " . $response);
     }
 
     switch (json_last_error()) {
