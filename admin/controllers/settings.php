@@ -22,9 +22,9 @@ class Settings {
 	 * Constructor. Initialize all the hooks
 	 */
 	public function __construct() {
-		add_action( 'admin_init', 'MavenAlgolia\Admin\Controllers\Settings::adminInit');
-		add_action( 'admin_menu', 'MavenAlgolia\Admin\Controllers\Settings::adminMenu');
-		add_action( 'admin_notices', 'MavenAlgolia\Admin\Controllers\Settings::adminNotices' );
+		add_action( 'admin_init', '\MavenAlgolia\Admin\Controllers\Settings::adminInit');
+		add_action( 'admin_menu', '\MavenAlgolia\Admin\Controllers\Settings::adminMenu');
+		add_action( 'admin_notices', '\MavenAlgolia\Admin\Controllers\Settings::adminNotices' );
 		add_action( 'wp_ajax_' . Settings::ajaxIndexAction , array( &$this, 'ajaxIndex' ), 10, 1);
 		add_action( 'wp_ajax_' . Settings::ajaxIndexTaxonomyAction , array( &$this, 'ajaxIndexTaxonomy' ), 10, 1);
 		add_action( 'wp_ajax_' . Settings::ajaxRemoveAction , array( &$this, 'ajaxRemoveFromIndex' ), 10, 1);
@@ -124,7 +124,7 @@ class Settings {
 	public static function adminMenu(){
 		$registry = Registry::instance();
 		$iconUrl = $registry->getPluginUrl()."admin/assets/images/icon.png";
-		add_menu_page(__( 'Maven Algolia Settings', 'mvnAlg' ), __( 'Maven Algolia', 'mvnAlg' ), 'manage_options', Registry::instance()->getPluginShortName().'_general_settings', 'MavenAlgolia\Admin\Controllers\Settings::showForm',$iconUrl );
+		add_menu_page(__( 'Maven Algolia Settings', 'mvnAlg' ), __( 'Maven Algolia', 'mvnAlg' ), 'manage_options', Registry::instance()->getPluginShortName().'_general_settings', '\MavenAlgolia\Admin\Controllers\Settings::showForm',$iconUrl );
 	}
 
 	/**

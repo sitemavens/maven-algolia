@@ -1,7 +1,7 @@
 <?php
 
-use MavenAlgolia\Admin\Controllers\Settings;
-use MavenAlgolia\Core;
+use \MavenAlgolia\Admin\Controllers\Settings;
+use \MavenAlgolia\Core;
 
 $registry = Core\Registry::instance();
 $langDomain = $registry->getPluginShortName();

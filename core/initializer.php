@@ -1,7 +1,7 @@
 <?php
 
 namespace MavenAlgolia\Core;
-use MavenAlgolia\Core\Registry;
+use \MavenAlgolia\Core\Registry;
 
 class Initializer  {
 	
