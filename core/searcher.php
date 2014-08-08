@@ -43,8 +43,6 @@ class Searcher  {
 			add_action( 'found_posts', array( $this, 'getFoundPostsAlgolia' ), 1, 2 );
 			add_filter( 'posts_search', array( $this, 'removeWPSearchSentence' ) );
 			add_filter( 'post_limits', array( $this, 'setAlgoliaLimits' ) );
-//			add_action( 'wp_enqueue_scripts', array( $this, 'enqueueScripts' ) );
-
 		}
 	}
 	
