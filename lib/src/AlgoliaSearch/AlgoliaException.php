@@ -22,11 +22,11 @@
  * THE SOFTWARE.
  *
  *
- * VERSION 1.3.0
+ * VERSION 1.2.2
  *
  */
+namespace AlgoliaSearch;
 
-require_once 'src/AlgoliaSearch/AlgoliaException.php';
-require_once 'src/AlgoliaSearch/ClientContext.php';
-require_once 'src/AlgoliaSearch/Client.php';
-require_once 'src/AlgoliaSearch/Index.php';
+class AlgoliaException extends \Exception
+{
+}
