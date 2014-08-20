@@ -29,7 +29,7 @@ $langDomain = $registry->getPluginShortName();
 								<label for=""><?php esc_html_e( 'Search input name', $langDomain ); ?></label>
 							</td>
 							<td>
-								<input type="text" class="" value="<?php echo esc_attr( $registry->getSearchInputName() ); ?>" id="mvnAlg_showPostCategoriesInPopup" name="<?php echo Settings::settingsField; ?>[searchInputName]">
+								<input type="text" class="" value="<?php echo esc_attr( $registry->getSearchInputName() ); ?>" id="mvnAlg_showPostCategoriesInPopup" name="<?php echo Settings::settingsField; ?>[searchInputName]" required="">
 							</td>
 						</tr>
 						<tr>
@@ -77,9 +77,9 @@ $langDomain = $registry->getPluginShortName();
 								<?php
 								$popupThumbArgs = $registry->getPopupThumbnailArgs();
 								?>
-								<input type="text" class="" value="<?php echo esc_attr( $popupThumbArgs[ 'w' ] ); ?>" id="mvnAlg_popupThumbWidth" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][w]">px
+								<input type="text" class="" value="<?php echo esc_attr( $popupThumbArgs['w'] ); ?>" id="mvnAlg_popupThumbWidth" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][w]">px
 								<br>
-								<input type="text" class="" value="<?php echo esc_attr( $popupThumbArgs[ 'h' ] ); ?>" id="mvnAlg_popupThumbHeight" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][h]">px
+								<input type="text" class="" value="<?php echo esc_attr( $popupThumbArgs['h'] ); ?>" id="mvnAlg_popupThumbHeight" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][h]">px
 							</td>
 						</tr>
 						</td>
@@ -118,7 +118,7 @@ $langDomain = $registry->getPluginShortName();
 							$taxonomiesLabels = Core\FieldsHelper::getTaxonomyLabels();
 							foreach ( $taxonomiesToIndex as $taxKey => $tax ) :
 								?>
-								<li><?php echo sprintf( '<strong>%s</strong>: %s <br> <strong>%s</strong>: %s', __( 'Taxonomy' ), $taxonomiesLabels[ $taxKey ], __( 'Index Name' ), $tax->getIndexName() ); ?></li>
+								<li><?php echo sprintf( '<strong>%s</strong>: %s <br> <strong>%s</strong>: %s', __( 'Taxonomy' ), $taxonomiesLabels[$taxKey], __( 'Index Name' ), $tax->getIndexName() ); ?></li>
 								<?php
 							endforeach;
 						endif;
