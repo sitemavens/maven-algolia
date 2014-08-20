@@ -2,9 +2,8 @@
 
 namespace MavenAlgolia\Core;
 
+class Registry {
 
-class Registry{
-	
 	private static $instance;
 	private $pluginUrl;
 	private $pluginDir;
@@ -13,45 +12,45 @@ class Registry{
 	private $pluginDirectoryName = "";
 	private $pluginKey = false;
 	private $pluginShortName = false;
-	private $options = array( );
-	
+	private $options = array();
+
 	/**
 	 *
 	 * @var WordpressRegistry 
 	 */
 	private $settingKey = 'maven-algolia';
-	
-	
+
 	/**
 	 * 
 	 * @return \MavenAlgolia\Core\Registry
 	 */
 	static function instance() {
-		if ( ! isset( self::$instance ) ) {
-			
+		if ( !isset( self::$instance ) ) {
+
 			$defaultOptions = array(
-				'apiKey' => '', 
+				'apiKey' => '',
 				'appId' => '',
 				'apiKeySearch' => '',
 				'defaultIndex' => '',
 				'appValid' => '0',
 				'appSearchValid' => '0',
 				'indexTaxonomies' => '0',
+				'searchInputName' => 's',
 				'showPostCategoriesInPopup' => '0',
 				'showThumbInPopup' => '0',
-				'popupThumbnailArgs' => array('w' => 20, 'h' => 40),
+				'popupThumbnailArgs' => array( 'w' => 20, 'h' => 40 ),
 				'showExcerptInPopup' => '0',
 				'excerptMaxChars' => '0',
 			);
-			
+
 			self::$instance = new self( );
-			self::$instance->setOptions($defaultOptions);
+			self::$instance->setOptions( $defaultOptions );
 		}
-		
+
 
 		return self::$instance;
 	}
-	
+
 	/**
 	 * Return the values
 	 * @return \Maven\Settings\Option[]
@@ -75,8 +74,7 @@ class Registry{
 			$this->options[ $optionKey ] = $option;
 		}
 	}
-	
-	
+
 	/**
 	 * Return a setting
 	 * @param string $key
@@ -90,8 +88,7 @@ class Registry{
 
 		return null;
 	}
-	
-	
+
 	/**
 	 * Set a setting
 	 * @param string $key
@@ -104,7 +101,7 @@ class Registry{
 			$this->saveOptions( $this->options );
 		}
 	}
-	
+
 	/**
 	 * Set a setting
 	 * @param string $key
@@ -117,104 +114,99 @@ class Registry{
 		}
 	}
 
-	public function getPluginUrl () {
+	public function getPluginUrl() {
 		return $this->pluginUrl;
 	}
 
-	public function getPluginDir () {
+	public function getPluginDir() {
 		return $this->pluginDir;
 	}
 
-	public function getPluginVersion () {
+	public function getPluginVersion() {
 		return $this->pluginVersion;
 	}
 
-	public function getPluginName () {
+	public function getPluginName() {
 		return $this->pluginName;
 	}
 
-	public function getPluginDirectoryName () {
+	public function getPluginDirectoryName() {
 		return $this->pluginDirectoryName;
 	}
 
-	public function getPluginKey () {
+	public function getPluginKey() {
 		return $this->pluginKey;
 	}
 
-	public function getPluginShortName () {
+	public function getPluginShortName() {
 		return $this->pluginShortName;
 	}
 
-	public static function setInstance ( $instance ) {
+	public static function setInstance( $instance ) {
 		self::$instance = $instance;
 	}
 
-	public function setPluginUrl ( $pluginUrl ) {
+	public function setPluginUrl( $pluginUrl ) {
 		$this->pluginUrl = $pluginUrl;
 	}
 
-	public function setPluginDir ( $pluginDir ) {
+	public function setPluginDir( $pluginDir ) {
 		$this->pluginDir = $pluginDir;
 	}
 
-	public function setPluginVersion ( $pluginVersion ) {
+	public function setPluginVersion( $pluginVersion ) {
 		$this->pluginVersion = $pluginVersion;
 	}
 
-	public function setPluginName ( $pluginName ) {
+	public function setPluginName( $pluginName ) {
 		$this->pluginName = $pluginName;
 	}
 
-	public function setPluginDirectoryName ( $pluginDirectoryName ) {
+	public function setPluginDirectoryName( $pluginDirectoryName ) {
 		$this->pluginDirectoryName = $pluginDirectoryName;
 	}
 
-	public function setPluginKey ( $pluginKey ) {
+	public function setPluginKey( $pluginKey ) {
 		$this->pluginKey = $pluginKey;
 	}
 
-	public function setPluginShortName ( $pluginShortName ) {
+	public function setPluginShortName( $pluginShortName ) {
 		$this->pluginShortName = $pluginShortName;
 	}
-	
-	
-	public function reset(){
-		
+
+	public function reset() {
+
 		delete_option( $this->getSettingKey() );
-		
 	}
-	
+
 	/**
 	 * 
 	 * @param \Maven\Settings\Option[] $options
 	 */
-	public function saveOptions( $options ){
-		
-		if( get_option( $this->getSettingKey() ) !== FALSE ){
+	public function saveOptions( $options ) {
+
+		if ( get_option( $this->getSettingKey() ) !== FALSE ) {
 			//Save the options in the WP table
 			update_option( $this->getSettingKey(), $options );
-		}else{
+		} else {
 			//Save the options in the WP table
 			add_option( $this->getSettingKey(), $options, '', 'no' );
 		}
-		
+
 		$this->setOptions( $options );
 	}
-	
-	
-	private function getSettingKey(){
-		
+
+	private function getSettingKey() {
+
 		return $this->settingKey;
 	}
-	
-	public function getAbsPath(){
+
+	public function getAbsPath() {
 		return ABSPATH;
-		
 	}
-	
-	
-	public function getWpIncludesPath( $full = false ){
-		
+
+	public function getWpIncludesPath( $full = false ) {
+
 		if ( $full ) {
 			return ABSPATH . WPINC . "/";
 		}
@@ -222,20 +214,17 @@ class Registry{
 		return WPINC;
 	}
 
-	
 	public function init() {
-		
+
 		// Get the options from the db
 		$existingsOptions = get_option( $this->getSettingKey() );
-		
+
 		// If options exists we need to merge them with the default ones
 		$options = wp_parse_args( $existingsOptions, $this->getOptions() );
-		
+
 		$this->setOptions( $options );
-		
-		
 	}
-	
+
 	/**
 	 * Return a setting
 	 * @param string $key
@@ -249,58 +238,61 @@ class Registry{
 
 		return null;
 	}
-	
-	
-	public function getApiKey(){
-		return $this->getValue('apiKey');
+
+	public function getApiKey() {
+		return $this->getValue( 'apiKey' );
 	}
-	
-	public function getAppId(){
-		return $this->getValue('appId');
+
+	public function getAppId() {
+		return $this->getValue( 'appId' );
 	}
-	
-	public function getApiKeySearch(){
-		return $this->getValue('apiKeySearch');
+
+	public function getApiKeySearch() {
+		return $this->getValue( 'apiKeySearch' );
 	}
-	
-	public function getDefaultIndex(){
-		return $this->getValue('defaultIndex');
+
+	public function getDefaultIndex() {
+		return $this->getValue( 'defaultIndex' );
 	}
-	
-	public function isValidApp(){
-		return (bool)$this->getValue('appValid');
+
+	public function isValidApp() {
+		return ( bool ) $this->getValue( 'appValid' );
 	}
-	
-	public function isValidAppSearch(){
-		return (bool)$this->getValue('appSearchValid');
+
+	public function isValidAppSearch() {
+		return ( bool ) $this->getValue( 'appSearchValid' );
 	}
-	
-	public function isEnabled(){
-		return (bool) ( $this->isValidAppSearch() && $this->getDefaultIndex() );
+
+	public function isEnabled() {
+		return ( bool ) ( $this->isValidAppSearch() && $this->getDefaultIndex() );
 	}
-	
-	public function indexTaxonomies( ) {
-		return (bool)$this->getValue('indexTaxonomies');
+
+	public function indexTaxonomies() {
+		return ( bool ) $this->getValue( 'indexTaxonomies' );
 	}
-	
-	public function showPostCategoriesInPopup( ) {
-		return (bool)$this->getValue('showPostCategoriesInPopup');
+
+	public function getSearchInputName() {
+		return $this->getValue( 'searchInputName' );
 	}
-	
-	public function showExcerptInPopup( ) {
-		return (bool)$this->getValue('showExcerptInPopup');
+
+	public function showPostCategoriesInPopup() {
+		return ( bool ) $this->getValue( 'showPostCategoriesInPopup' );
 	}
-	
-	public function getExcerptMaxChars( ) {
-		return $this->getValue('excerptMaxChars');
+
+	public function showExcerptInPopup() {
+		return ( bool ) $this->getValue( 'showExcerptInPopup' );
 	}
-	
-	public function showThumbInPopup( ) {
-		return (bool)$this->getValue('showThumbInPopup');
+
+	public function getExcerptMaxChars() {
+		return $this->getValue( 'excerptMaxChars' );
 	}
-	
-	public function getPopupThumbnailArgs( ) {
-		return $this->getValue('popupThumbnailArgs');
+
+	public function showThumbInPopup() {
+		return ( bool ) $this->getValue( 'showThumbInPopup' );
 	}
-	
-} 
+
+	public function getPopupThumbnailArgs() {
+		return $this->getValue( 'popupThumbnailArgs' );
+	}
+
+}
