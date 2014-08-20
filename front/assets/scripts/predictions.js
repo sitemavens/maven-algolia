@@ -9,13 +9,16 @@ var mvnAlgoliaPrediction = (function($) {
 				this.initAlgolia();
 			}
 		},
+		hasProp: function(obj, prop) {
+			return Object.prototype.hasOwnProperty.call(obj, prop);
+		},
 		initAlgolia: function() {
 			algolia = new AlgoliaSearch( mvnAlgSettings.appId, mvnAlgSettings.apiKeySearch ); // public credentials
 		},
 		indexTaxonomies: function() {
-			if( typeof mvnAlgSettings.indexTaxonomies !== 'undefined' 
+			if( this.hasProp( mvnAlgSettings, 'indexTaxonomies')
 					&& parseInt( mvnAlgSettings.indexTaxonomies ) === 1 
-					&& typeof mvnAlgSettings.taxonomiesToIndex !== 'undefined'
+					&& this.hasProp( mvnAlgSettings, 'taxonomiesToIndex')
 					&& mvnAlgSettings.taxonomiesToIndex ){
 				return true;
 			}
