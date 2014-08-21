@@ -50,6 +50,7 @@ class Initializer {
 			wp_register_script( 'mvnAlgoliaPrediction', Registry::instance()->getPluginUrl() . 'front/assets/scripts/predictions.js', array( 'jquery', 'jquery-ui-autocomplete', 'mvnAlgoliaSearch' ), Registry::instance()->getPluginVersion() );
 			wp_enqueue_script( 'mvnAlgoliaPrediction' );
 
+			$templates = \MavenAlgolia\Core\Utils::getAlgoliaTemplates();
 
 			$vars = array(
 				'inputSearchName' => Registry::instance()->getValue( 'searchInputName' ),
@@ -59,6 +60,7 @@ class Initializer {
 //										),
 			);
 			wp_localize_script( 'mvnAlgoliaPrediction', 'mvnAlgSearchVars', $vars, Registry::instance()->getPluginVersion() );
+			wp_localize_script( 'mvnAlgoliaPrediction', 'mvnAlgTemplates', $templates, Registry::instance()->getPluginVersion() );
 		}
 	}
 

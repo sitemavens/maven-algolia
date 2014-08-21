@@ -77,47 +77,46 @@ var mvnAlgoliaPrediction = (function($) {
 			}
 			response(data);
 		},
-		getDisplayPost: function( hit ) {
-			var htmlPost = '';
-			htmlPost += '	<a href="' + hit.permalink + '" class="mvn-alg-item-link">';
-			if( mvnAlgSettings.showThumbInPopup && typeof hit.featuredImage !== 'undefined' && hit.featuredImage ){
-				var imgSrc = self.getThumbnailSrc( hit.featuredImage, 'thumbnail' );
-				if( imgSrc ){
+				getDisplayPost: function(hit) {
+			console.log(mvnAlgTemplates);
+			var htmlPost = mvnAlgTemplates.post;
+			htmlPost = htmlPost.replace('{permalink}', hit.permalink);
+//			htmlPost += '	<a href="' + hit.permalink + '" class="mvn-alg-item-link">';
+			if (mvnAlgSettings.showThumbInPopup && typeof hit.featuredImage !== 'undefined' && hit.featuredImage) {
+				var imgSrc = self.getThumbnailSrc(hit.featuredImage, 'thumbnail');
+				if (imgSrc) {
 					var imgW = mvnAlgSettings.popupThumbnailArgs.w;
 					var imgH = mvnAlgSettings.popupThumbnailArgs.h;
-					htmlPost += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="'+imgSrc+'" width="'+imgW+'" height="'+imgH+'" /></span>';
+					htmlPost = htmlPost.replace('{imgSrc}', imgSrc).replace('{imgW}', imgW).replace('{imgH}', imgH);
+//					htmlPost += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="' + imgSrc + '" width="' + imgW + '" height="' + imgH + '" /></span>';
 				}
 			}
-			
-			htmlPost += '		<span class="mvn-alg-item-title">' + hit.title.trim() + '</span>';
+			htmlPost = htmlPost.replace('{title}', hit.title.trim());
+//			htmlPost += '		<span class="mvn-alg-item-title">' + hit.title.trim() + '</span>';
 
-			if( mvnAlgSettings.showPostCategoriesInPopup && typeof hit.categories !== 'undefined' ){
-				htmlPost += '		<span class="mvn-alg-item-cats">' + hit.categories.join() + '</span>';
+			if (mvnAlgSettings.showPostCategoriesInPopup && typeof hit.categories !== 'undefined') {
+				htmlPost = htmlPost.replace('{categories}', hit.categories.join());
+//				htmlPost += '		<span class="mvn-alg-item-cats">' + hit.categories.join() + '</span>';
 			}
-			if( mvnAlgSettings.showExcerptInPopup && typeof hit.excerpt !== 'undefined' && hit.excerpt ){
+			if (mvnAlgSettings.showExcerptInPopup && typeof hit.excerpt !== 'undefined' && hit.excerpt) {
 				var excerptSize = mvnAlgSettings.excerptMaxChars || 0;
 				var excerptCut = hit.excerpt;
-				if( excerptSize > 0 ){
-					excerptCut = self.trimString( hit.excerpt, excerptSize );
+				if (excerptSize > 0) {
+					excerptCut = self.trimString(hit.excerpt, excerptSize);
 				}
-				htmlPost += '		<span class="mvn-alg-item-excerpt">' + excerptCut + '</span>';
+				htmlPost = htmlPost.replace('{excerpt}', excerptCut);
+//				htmlPost += '		<span class="mvn-alg-item-excerpt">' + excerptCut + '</span>';
 			}
-			htmlPost += '	</a>';
+//			htmlPost += '	</a>';
 			return htmlPost;
 		},
-		getDisplayTerm: function( hit ) {
-			var html = '';
-			html += '<a href="' + hit.permalink + '" class="mvn-alg-cat-link">';
-			if( mvnAlgSettings.showThumbInPopup && typeof hit.featuredImage !== 'undefined' && hit.featuredImage ){
-				var imgSrc = self.getThumbnailSrc( hit.featuredImage, 'thumbnail' );
-				if( imgSrc ){
-					var imgW = mvnAlgSettings.popupThumbnailArgs.w;
-					var imgH = mvnAlgSettings.popupThumbnailArgs.h;
-					htmlPost += '		<span class="mvn-alg-cat-thumbnail"><img class="mvn-alg-cat-thumbnail-img" src="'+imgSrc+'" width="'+imgW+'" height="'+imgH+'" /></span>';
-				}
-			}
-			html += '		<span class="mvn-alg-cat-title">' + hit.title.trim() + '</span>';
-			html += '</a>';
+		getDisplayTerm: function(hit) {
+			var html = mvnAlgTemplates.taxonomy;
+			html = html.replace('{permalink}', hit.permalink);
+//			html += '<a href="' + hit.permalink + '" class="mvn-alg-cat-link">';
+			html = html.replace('{title}', hit.title.trim());
+//			html += '		<span class="mvn-alg-cat-title">' + hit.title.trim() + '</span>';
+//			html += '</a>';
 			return html;
 		},
 		getThumbnailSrc: function( thumbnail, size ) {

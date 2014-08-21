@@ -3,7 +3,7 @@
 namespace MavenAlgolia\Core;
 
 // Exit if accessed directly 
-if ( ! defined( 'ABSPATH' ) )
+if ( !defined( 'ABSPATH' ) )
 	exit;
 
 class Utils {
@@ -22,8 +22,10 @@ class Utils {
 	 */
 	public static function unCamelize( $camel, $splitter = "-" ) {
 
-		return preg_replace(
-				'/(^|[a-z])([A-Z])/e', 'strtolower(strlen("\\1") ? "\\1' . $splitter . '\\2" : "\\2")', $camel
+		return preg_replace_callback(
+				'/(^|[a-z])([A-Z])/', function($m) use ($splitter) {
+			return strtolower( strlen( $m[1] ) ? $m[1] . $splitter . $m[2] : $m[2]  );
+		}, $camel
 		);
 	}
 
@@ -41,12 +43,12 @@ class Utils {
 
 	public function toCamelCase( $str, $capitaliseFirstChar = false ) {
 		if ( $capitaliseFirstChar ) {
-			$str[ 0 ] = strtoupper( $str[ 0 ] );
+			$str[0] = strtoupper( $str[0] );
 		}
 		$func = create_function( '$c', 'return strtoupper($c[1]);' );
 		return preg_replace_callback( '/_([a-z])/', $func, $str );
 	}
- 
+
 	public static function updatePostParent( $postId, $parentId ) {
 
 		$post = get_post( $postId );
@@ -87,19 +89,19 @@ class Utils {
 			 * new post data array
 			 */
 			$args = array(
-			    'comment_status' => $post->comment_status,
-			    'ping_status' => $post->ping_status,
-			    'post_author' => $new_post_author,
-			    'post_content' => $post->post_content,
-			    'post_excerpt' => $post->post_excerpt,
-			    'post_name' => $post->post_name,
-			    'post_parent' => $post->post_parent,
-			    'post_password' => $post->post_password,
-			    'post_status' => 'draft',
-			    'post_title' => $post->post_title,
-			    'post_type' => $post->post_type,
-			    'to_ping' => $post->to_ping,
-			    'menu_order' => $post->menu_order
+				'comment_status' => $post->comment_status,
+				'ping_status' => $post->ping_status,
+				'post_author' => $new_post_author,
+				'post_content' => $post->post_content,
+				'post_excerpt' => $post->post_excerpt,
+				'post_name' => $post->post_name,
+				'post_parent' => $post->post_parent,
+				'post_password' => $post->post_password,
+				'post_status' => 'draft',
+				'post_title' => $post->post_title,
+				'post_type' => $post->post_type,
+				'to_ping' => $post->to_ping,
+				'menu_order' => $post->menu_order
 			);
 
 			/*
@@ -113,8 +115,8 @@ class Utils {
 			$taxonomies = get_object_taxonomies( $post->post_type ); // returns array of taxonomy names for post type, ex array("category", "post_tag");
 			foreach ( $taxonomies as $taxonomy ) {
 				$post_terms = wp_get_object_terms( $postId, $taxonomy );
-				for ( $i = 0; $i < count( $post_terms ); $i ++  ) {
-					wp_set_object_terms( $new_post_id, $post_terms[ $i ]->slug, $taxonomy, true );
+				for ( $i = 0; $i < count( $post_terms ); $i ++ ) {
+					wp_set_object_terms( $new_post_id, $post_terms[$i]->slug, $taxonomy, true );
 				}
 			}
 
@@ -127,7 +129,7 @@ class Utils {
 				foreach ( $post_meta_infos as $meta_info ) {
 					$meta_key = $meta_info->meta_key;
 					$meta_value = addslashes( $meta_info->meta_value );
-					$sql_query_sel[ ] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
+					$sql_query_sel[] = "SELECT $new_post_id, '$meta_key', '$meta_value'";
 				}
 				$sql_query.= implode( " UNION ALL ", $sql_query_sel );
 				$wpdb->query( $sql_query );
@@ -141,6 +143,21 @@ class Utils {
 		} else {
 			throw new \Maven\Exceptions\NotFoundException( 'The post doesn\'t exist: ' . $new_post_id );
 		}
+	}
+
+	public static function getAlgoliaTemplates() {
+		$algoliaTemplates['post'] = locate_template( 'maven/algolia-post.php' );
+		$algoliaTemplates['taxonomy'] = locate_template( 'maven/algolia-taxonomy.php' );
+		foreach ( $algoliaTemplates as $key => &$value ) {
+			if ( empty( $value ) ) {
+				$value = plugin_dir_path( dirname( __FILE__ ) ) . 'front/templates/algolia-' . $key . '.php';
+			}
+			ob_start();
+			include_once $value;
+			$value = ob_get_contents();
+			ob_end_clean();
+		}
+		return $algoliaTemplates;
 	}
 
 }
