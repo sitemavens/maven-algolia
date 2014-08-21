@@ -87,7 +87,7 @@ var mvnAlgoliaPrediction = (function($) {
 				if (imgSrc) {
 					var imgW = mvnAlgSettings.popupThumbnailArgs.w;
 					var imgH = mvnAlgSettings.popupThumbnailArgs.h;
-					htmlPost = htmlPost.replace('{imgSrc}', imgSrc).replace('{imgW}', imgW).replace('{imgH}', imgH);
+					htmlPost = htmlPost.replace('{imgSrc}', imgSrc).replace('{imgWidth}', imgW).replace('{imgHeight}', imgH);
 //					htmlPost += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="' + imgSrc + '" width="' + imgW + '" height="' + imgH + '" /></span>';
 				}
 			}
