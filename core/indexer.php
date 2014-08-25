@@ -14,7 +14,7 @@ class Indexer {
 	 * @param string $appId
 	 * @throws \Exception
 	 */
-	public function __construct( $appId, $apiKey ) {
+	public function __construct ( $appId, $apiKey ) {
 
 		/**
 		 * Help documentation
@@ -40,11 +40,11 @@ class Indexer {
 		$this->appId = $appId;
 	}
 
-	public function getApiKey() {
+	public function getApiKey () {
 		return $this->apiKey;
 	}
 
-	public function getAppId() {
+	public function getAppId () {
 		return $this->appId;
 	}
 
@@ -55,7 +55,7 @@ class Indexer {
 	 * @return boolean
 	 * @throws \MavenAlgolia\Core\Exception
 	 */
-	public function moveIndex( $tmpIndexName, $indexName ) {
+	public function moveIndex ( $tmpIndexName, $indexName ) {
 		if ( !empty( $tmpIndexName ) && !empty( $indexName ) ) {
 			// initialize API Client & Index
 			$client = new \AlgoliaSearch\Client( $this->getAppId(), $this->getApiKey() );
@@ -76,7 +76,7 @@ class Indexer {
 	 * @return boolean
 	 * @throws \MavenAlgolia\Core\Exception
 	 */
-	public function indexObject( $indexName, $object ) {
+	public function indexObject ( $indexName, $object ) {
 
 		if ( !isset( $object['objectID'] ) ) {
 			return false;
@@ -103,7 +103,7 @@ class Indexer {
 	 * @return boolean
 	 * @throws \MavenAlgolia\Core\Exception
 	 */
-	public function indexObjects( $indexName, $objects ) {
+	public function indexObjects ( $indexName, $objects ) {
 
 		// initialize API Client & Index
 		$client = new \AlgoliaSearch\Client( $this->getAppId(), $this->getApiKey() );
@@ -126,7 +126,7 @@ class Indexer {
 	 * @return boolean
 	 * @throws \MavenAlgolia\Core\Exception
 	 */
-	public function deleteObject( $indexName, $objectId ) {
+	public function deleteObject ( $indexName, $objectId ) {
 		// initialize API Client & Index
 		$client = new \AlgoliaSearch\Client( $this->getAppId(), $this->getApiKey() );
 		$index = $client->initIndex( $indexName );
@@ -147,7 +147,7 @@ class Indexer {
 	 * @return boolean
 	 * @throws \MavenAlgolia\Core\Exception
 	 */
-	public function deleteObjects( $indexName, $objectIds ) {
+	public function deleteObjects ( $indexName, $objectIds ) {
 		// initialize API Client & Index
 		$client = new \AlgoliaSearch\Client( $this->getAppId(), $this->getApiKey() );
 		$index = $client->initIndex( $indexName );
@@ -174,7 +174,7 @@ class Indexer {
 	 * @param Domain\PostType|string $type
 	 * @return array
 	 */
-	public function postToAlgoliaObject( $post, $type = null ) {
+	public function postToAlgoliaObject ( $post, $type = null ) {
 		global $wpdb;
 
 		if ( empty( $type ) && !empty( $post->post_type ) ) {
@@ -326,7 +326,7 @@ class Indexer {
 	 * @param int $attachId Attachment Post ID
 	 * @return array  Image information
 	 */
-	public function getImage( $attachId ) {
+	public function getImage ( $attachId ) {
 		global $wpdb;
 		if ( empty( $attachId ) ) {
 			return array();
@@ -384,7 +384,7 @@ class Indexer {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function removeIndexData( $indexName, $types, $postsPerPage = -1, $offset = 0 ) {
+	public function removeIndexData ( $indexName, $types, $postsPerPage = -1, $offset = 0 ) {
 		// WE will use $wpdb to make the calls faster
 		global $wpdb;
 
@@ -442,7 +442,7 @@ class Indexer {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function indexData( $indexName, $types, $postsPerPage = -1, $offset = 0 ) {
+	public function indexData ( $indexName, $types, $postsPerPage = -1, $offset = 0 ) {
 		// WE will use $wpdb to make the calls faster
 		global $wpdb;
 
@@ -509,7 +509,7 @@ class Indexer {
 	 * @param Domain\Taxonomy|string $taxonomy
 	 * @return array
 	 */
-	public function termToAlgoliaObject( $term, $taxonomy = null ) {
+	public function termToAlgoliaObject ( $term, $taxonomy = null ) {
 
 		if ( empty( $taxonomy ) && !empty( $term->taxonomy ) ) {
 			$taxonomy = $term->taxonomy;
@@ -573,7 +573,7 @@ class Indexer {
 	 * @return void
 	 * @throws \Exception
 	 */
-	public function indexTaxonomyData( $indexName, $taxonomy, $postsPerPage = -1, $offset = 0 ) {
+	public function indexTaxonomyData ( $indexName, $taxonomy, $postsPerPage = -1, $offset = 0 ) {
 		// WE will use $wpdb to make the calls faster
 		global $wpdb;
 
