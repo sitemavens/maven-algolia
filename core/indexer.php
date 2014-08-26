@@ -166,34 +166,91 @@ class Indexer {
 	 * POSTS SECTION 
 	 * ------------------------------------------------------------
 	 */
-
+	
 	/**
 	 * Convert WP post object to Algolia format
-	 * @global \MavenAlgolia\Core\type $wpdb
 	 * @param \WP_Post $post
 	 * @param Domain\PostType|string $type
+	 * @param Domain\PostIndexInfo $infoToIndex
 	 * @return array
 	 */
-	public function postToAlgoliaObject ( $post, $type = null ) {
-		global $wpdb;
-
+	public function postToAlgoliaObject ( $post, $type = null, $infoToIndex = null ) {
+		if( is_numeric( $post ) ){
+			$post = get_post( (int)$post );
+		}
+		
 		if ( empty( $type ) && !empty( $post->post_type ) ) {
 			$type = $post->post_type;
 		}
 		if ( is_string( $type ) ) {
-			// TODO: Implement a better way to do this, maybe setting the post objects as a class attribute
-			$postObjects = FieldsHelper::getPostTypesObject();
-			if ( isset( $postObjects[$type] ) ) {
-				$type = $postObjects[$type];
-			} else {
-				// If the post type object doesn't exist return an empty array
-				return array();
-			}
+			$type = $this->getPostTypeObject( $type );
 		}
 
+		if( !$type ){
+			return array();
+		}
+		
+		if( $infoToIndex === NULL ){
+			$infoToIndex = new Domain\PostIndexInfo();
+			$infoToIndex->setAllAs( TRUE );
+		}
+		
 		// select the identifier of this row
 		$row = array();
+		
+		if( $infoToIndex->indexWpFields() ){
+			$row = $this->getWPFields($type, $post, $row);
+		}else{
+			// IF we won't send the wp field to index we should be sure that the objectID will be there to update the info to the correct item
+			$row['objectID'] = (int) $post->ID;
+		}
+		
+		if( $infoToIndex->indexCompoundFields() ){
+			$row = $this->getCompoundFields($type, $post, $row);
+		}
+		
+		if( $infoToIndex->indexMetaFields() ){
+			$row = $this->getMetas( $type, $post, $row );
+		}
 
+		if( $infoToIndex->indexTaxonomies() ){
+			$row = $this->getTaxonomies( $type, $post, $row );
+		}
+
+		if( $infoToIndex->indexThumbnail() ){
+			$row = $this->getThumbnail( $type, $post, $row );
+		}
+		
+		if( $infoToIndex->indexMediaType() ){
+			$row = $this->getMediaType( $type, $post, $row );
+		}
+
+		return $row;
+	}
+	
+	/**
+	 * 
+	 * @param string $type
+	 * @return null | object Null if the post type doesn't exists
+	 */
+	public function getPostTypeObject ( $type ) {
+		// TODO: Implement a better way to do this, maybe setting the post objects as a class attribute
+		$postObjects = FieldsHelper::getPostTypesObject();
+		if ( isset( $postObjects[$type] ) ) {
+			return $postObjects[$type];
+		} 
+		// If the post type object doesn't exist return an empty array
+		return;
+	}
+	
+	/**
+	 * 
+	 * @param object $type
+	 * @param \WP_Post $post Post to index
+	 * @param array $row Current post info
+	 * @return array
+	 */
+	public function getWPFields( $type, $post, $row = array() ) {
 		// Index WP Post table fields
 		$fields = $type->getFields();
 		if ( is_array( $fields ) && !empty( $fields ) ) {
@@ -205,17 +262,37 @@ class Indexer {
 			unset( $field );
 		}
 		unset( $fields );
-
+		return $row;
+	}
+	
+	/**
+	 * 
+	 * @param object $type
+	 * @param \WP_Post $post Post to index
+	 * @param array $row Current post info
+	 * @return array
+	 */
+	public function getCompoundFields ( $type, $post, $row = array() ) {
 		// Index WP Compound fields
 		$compoundFields = $type->getCompoundFields();
 		if ( is_array( $compoundFields ) && !empty( $compoundFields ) ) {
 			foreach ( $compoundFields as $compoundField ) {
-				$row[$compoundField->getLabel()] = FieldsHelper::formatFieldValue( FieldsHelper::getCompoundFieldValue( $post, $compoundField->getId() ) );
+				$row[$compoundField->getLabel()] = FieldsHelper::formatFieldValue( FieldsHelper::getCompoundFieldValue( $post, $compoundField->getId() ), $compoundField->getType() );
 			}
 			unset( $compoundField );
 		}
 		unset( $compoundFields );
-
+		return $row;
+	}
+	
+	/**
+	 * 
+	 * @param object $type
+	 * @param \WP_Post $post Post to index
+	 * @param array $row Current post info
+	 * @return array
+	 */
+	public function getMetas ( $type, $post, $row = array() ) {
 		// Index WP Post meta fields
 		$metaFields = $type->getMetaFields();
 		if ( is_array( $metaFields ) && !empty( $metaFields ) ) {
@@ -232,7 +309,17 @@ class Indexer {
 			unset( $metaField );
 		}
 		unset( $metaFields );
+		return $row;
+	}
 
+	/**
+	 * 
+	 * @param object $type
+	 * @param \WP_Post $post Post to index
+	 * @param array $row Current post info
+	 * @return array
+	 */
+	public function getTaxonomies ( $type, $post, $row = array() ) {
 		// Index WP Taxonomies
 		$taxonomies = $type->getTaxonomies();
 		if ( is_array( $taxonomies ) && !empty( $taxonomies ) ) {
@@ -264,8 +351,17 @@ class Indexer {
 			unset( $tags );
 		}
 		unset( $taxonomies );
-
-
+		return $row;
+	}
+	
+	/**
+	 * 
+	 * @param object $type
+	 * @param \WP_Post $post Post to index
+	 * @param array $row Current post info
+	 * @return array
+	 */
+	public function getThumbnail( $type, $post, $row = array() ) {
 		// Index featured image if it was configured so
 		$postThumbId = 0;
 		if ( $type->indexFeaturedImage() ) {
@@ -276,11 +372,23 @@ class Indexer {
 				$row['featuredImage'] = '';
 			}
 		}
-
+		return $row;
+	}
+	
+	/**
+	 * 
+	 * @global \MavenAlgolia\Core\type $wpdb
+	 * @param object $type
+	 * @param \WP_Post $post Post to index
+	 * @param array $row Current post info
+	 * @return array
+	 */
+	public function getMediaType ( $type, $post, $row = array() ) {
+		global $wpdb;
 		// Index WP media
 		$mediaTypes = $type->getMediaTypes();
 		if ( is_array( $mediaTypes ) && !empty( $mediaTypes ) ) {
-			$tags = array();
+//			$tags = array();
 			//TODO: implement different methods or ways to index audio, videos and other files
 			foreach ( $mediaTypes as $mediaType ) {
 
@@ -316,10 +424,9 @@ class Indexer {
 			unset( $mediaType );
 		}
 		unset( $mediaTypes );
-
 		return $row;
 	}
-
+	
 	/**
 	 * 
 	 * @global type $wpdb
