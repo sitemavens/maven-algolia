@@ -97,6 +97,33 @@ class Indexer {
 	}
 
 	/**
+	 * Update a single object
+	 * @param string $indexName
+	 * @param array $object
+	 * @return boolean
+	 * @throws \MavenAlgolia\Core\Exception
+	 */
+	public function updateObject ( $indexName, $partialObject, $createIfNotExists = true ) {
+
+		if ( !isset( $partialObject['objectID'] ) ) {
+			return false;
+		}
+
+		// initialize API Client & Index
+		$client = new \AlgoliaSearch\Client( $this->getAppId(), $this->getApiKey() );
+		$index = $client->initIndex( $indexName );
+		try {
+			// object contains the object to save
+			// the object must contains an objectID attribute
+			$index->partialUpdateObject( $partialObject, $createIfNotExists );
+			return true;
+		} catch ( \Exception $exc ) {
+			throw $exc;
+		}
+		return false;
+	}
+
+	/**
 	 * Index multiples objects
 	 * @param string $indexName
 	 * @param array $objects
