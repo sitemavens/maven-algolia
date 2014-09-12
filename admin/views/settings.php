@@ -72,6 +72,8 @@ $langDomain = $registry->getPluginShortName();
 								<?php esc_html_e( 'Thumbnail Width', $langDomain ); ?>
 								<br>
 								<?php esc_html_e( 'Thumbnail Height', $langDomain ); ?>
+								<br>
+								<?php esc_html_e( 'Default Image', $langDomain ); ?>
 							</td>
 							<td>
 								<?php
@@ -80,6 +82,8 @@ $langDomain = $registry->getPluginShortName();
 								<input type="text" class="" value="<?php echo esc_attr( $popupThumbArgs['w'] ); ?>" id="mvnAlg_popupThumbWidth" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][w]">px
 								<br>
 								<input type="text" class="" value="<?php echo esc_attr( $popupThumbArgs['h'] ); ?>" id="mvnAlg_popupThumbHeight" name="<?php echo Settings::settingsField; ?>[popupThumbnailArgs][h]">px
+								<br>
+								<input type="text" class="" value="<?php echo esc_attr( $registry->getDefaultThumbSrc() ); ?>" id="mvnAlg_defaultThumbSrc" name="<?php echo Settings::settingsField; ?>[defaultThumbSrc]"><?php esc_html_e('Full Path', $langDomain); ?>
 							</td>
 						</tr>
 						</td>

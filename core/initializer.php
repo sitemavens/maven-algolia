@@ -44,6 +44,7 @@ class Initializer {
 				'indexTaxonomies' => Registry::instance()->indexTaxonomies(),
 				'showThumbInPopup' => Registry::instance()->showThumbInPopup(),
 				'popupThumbnailArgs' => (Registry::instance()->showThumbInPopup()) ? Registry::instance()->getPopupThumbnailArgs() : array(),
+				'defaultThumbSrc' => (Registry::instance()->getDefaultThumbSrc()) ? Registry::instance()->getDefaultThumbSrc() : '',
 				'taxonomiesToIndex' => (Registry::instance()->indexTaxonomies()) ? FieldsHelper::getTaxonomiesToIndex() : array(),
 				'labels' => array( 'taxonomies' => FieldsHelper::getTaxonomyLabels(), 'posts' => __( 'Posts' ) )
 			);

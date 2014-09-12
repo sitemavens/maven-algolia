@@ -77,26 +77,25 @@ var mvnAlgoliaPrediction = (function($) {
 			}
 			response(data);
 		},
-				getDisplayPost: function(hit) {
-			console.log(mvnAlgTemplates);
+		getDisplayPost: function(hit) {
 			var htmlPost = mvnAlgTemplates.post;
+			var imgW = mvnAlgSettings.popupThumbnailArgs.w;
+			var imgH = mvnAlgSettings.popupThumbnailArgs.h;
 			htmlPost = htmlPost.replace('{permalink}', hit.permalink);
-//			htmlPost += '	<a href="' + hit.permalink + '" class="mvn-alg-item-link">';
+			htmlPost = htmlPost.replace('{title}', hit.title.trim());
 			if (mvnAlgSettings.showThumbInPopup && typeof hit.featuredImage !== 'undefined' && hit.featuredImage) {
 				var imgSrc = self.getThumbnailSrc(hit.featuredImage, 'thumbnail');
 				if (imgSrc) {
-					var imgW = mvnAlgSettings.popupThumbnailArgs.w;
-					var imgH = mvnAlgSettings.popupThumbnailArgs.h;
 					htmlPost = htmlPost.replace('{imgSrc}', imgSrc).replace('{imgWidth}', imgW).replace('{imgHeight}', imgH);
-//					htmlPost += '		<span class="mvn-alg-item-thumbnail"><img class="mvn-alg-item-thumbnail-img" src="' + imgSrc + '" width="' + imgW + '" height="' + imgH + '" /></span>';
 				}
+			}else{
+				htmlPost = htmlPost.replace('{imgSrc}', mvnAlgSettings.defaultThumbSrc).replace('{imgWidth}', imgW).replace('{imgHeight}', imgH);
 			}
-			htmlPost = htmlPost.replace('{title}', hit.title.trim());
-//			htmlPost += '		<span class="mvn-alg-item-title">' + hit.title.trim() + '</span>';
 
 			if (mvnAlgSettings.showPostCategoriesInPopup && typeof hit.categories !== 'undefined') {
 				htmlPost = htmlPost.replace('{categories}', hit.categories.join());
-//				htmlPost += '		<span class="mvn-alg-item-cats">' + hit.categories.join() + '</span>';
+			}else{
+				htmlPost = htmlPost.replace('{categories}', '');
 			}
 			if (mvnAlgSettings.showExcerptInPopup && typeof hit.excerpt !== 'undefined' && hit.excerpt) {
 				var excerptSize = mvnAlgSettings.excerptMaxChars || 0;
@@ -105,18 +104,15 @@ var mvnAlgoliaPrediction = (function($) {
 					excerptCut = self.trimString(hit.excerpt, excerptSize);
 				}
 				htmlPost = htmlPost.replace('{excerpt}', excerptCut);
-//				htmlPost += '		<span class="mvn-alg-item-excerpt">' + excerptCut + '</span>';
+			}else{
+				htmlPost = htmlPost.replace('{excerpt}', '');
 			}
-//			htmlPost += '	</a>';
 			return htmlPost;
 		},
 		getDisplayTerm: function(hit) {
 			var html = mvnAlgTemplates.taxonomy;
 			html = html.replace('{permalink}', hit.permalink);
-//			html += '<a href="' + hit.permalink + '" class="mvn-alg-cat-link">';
 			html = html.replace('{title}', hit.title.trim());
-//			html += '		<span class="mvn-alg-cat-title">' + hit.title.trim() + '</span>';
-//			html += '</a>';
 			return html;
 		},
 		getThumbnailSrc: function( thumbnail, size ) {
