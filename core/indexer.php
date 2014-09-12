@@ -99,7 +99,7 @@ class Indexer {
 	/**
 	 * Update a single object
 	 * @param string $indexName
-	 * @param array $object
+	 * @param array $partialObject
 	 * @return boolean
 	 * @throws \MavenAlgolia\Core\Exception
 	 */
@@ -482,12 +482,15 @@ class Indexer {
 		unset( $query );
 		unset( $attachment );
 
-		$attachmentMeta = get_post_meta( $attachId, '_wp_attachment_metadata', TRUE );
+		$attachmentMeta = wp_get_attachment_metadata( $attachId );
 
 		if ( is_array( $attachmentMeta ) && !empty( $attachmentMeta ) ) {
+			$attachmentUrl = wp_get_attachment_url( $attachId );
+			$baseFileUrl = str_replace( wp_basename($attachmentMeta['file']), '', $attachmentUrl);
 			$image['width'] = $attachmentMeta['width'];
 			$image['height'] = $attachmentMeta['height'];
-			$image['file'] = sprintf( '%s/%s', $uploadBaseUrl, $attachmentMeta['file'] );
+			$image['file'] = $attachmentMeta['file'];
+			$image['attachmentUrl'] = $attachmentUrl;
 			$image['sizes'] = $attachmentMeta['sizes'];
 			if ( isset( $image['sizes'] ) && is_array( $image['sizes'] ) ) {
 				$sizesToIndex = apply_filters( 'ma_image_sizes_to_index', array( 'thumbnail', 'medium', 'large' ) );
@@ -497,9 +500,8 @@ class Indexer {
 						continue;
 					}
 					if ( isset( $sizeAttrs['file'] ) && $sizeAttrs['file'] ) {
-						$baseFileUrl = str_replace( wp_basename( $attachmentMeta['file'] ), '', $attachmentMeta['file'] );
-
-						$sizeAttrs['file'] = sprintf( '%s/%s%s', $uploadBaseUrl, $baseFileUrl, $sizeAttrs['file'] );
+						$sizeAttrs['file'] = $sizeAttrs['file'];
+						$sizeAttrs['attachmentUrl'] = sprintf( '%s%s', $baseFileUrl, $sizeAttrs['file']);
 					}
 				}
 			}

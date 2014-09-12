@@ -28,10 +28,13 @@ class Initializer {
 
 			$adminUrl = admin_url();
 			$homeUrl = set_url_scheme( home_url() );
+			$uploadDir = wp_upload_dir();
+		
 			// Front js script
 			$settings = array(
 				'siteUrl' => $homeUrl,
 				'ajaxUrl' => $adminUrl . "admin-ajax.php",
+				'uploadDirUrl' => sprintf( '%s/', rtrim($uploadDir['baseurl'], '/') ),
 				'appId' => Registry::instance()->getAppId(),
 				'apiKeySearch' => Registry::instance()->getApiKeySearch(),
 				'indexName' => Registry::instance()->getDefaultIndex(),

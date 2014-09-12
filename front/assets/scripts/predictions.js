@@ -122,7 +122,15 @@ var mvnAlgoliaPrediction = (function($) {
 		getThumbnailSrc: function( thumbnail, size ) {
 			var src = '';
 			if( thumbnail && typeof thumbnail.sizes !== 'undefined' && typeof thumbnail.sizes[size] !== 'undefined' && thumbnail.sizes[size].file ){
-				src = thumbnail.sizes[size].file;
+				if( thumbnail.sizes[size].file.indexOf( mvnAlgSettings.uploadDirUrl ) >= 0 ){
+					// @deprecated in version 0.5
+					// attachement attribute will be used
+					src = thumbnail.sizes[size].file;
+				}else if( thumbnail.sizes[size].attachmentUrl ){
+					src =  thumbnail.sizes[size].attachmentUrl;
+				}else{
+					src =  mvnAlgSettings.uploadDirUrl + thumbnail.sizes[size].file;
+				}
 			}
 			return src;
 		},

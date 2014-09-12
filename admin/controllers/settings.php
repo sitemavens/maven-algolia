@@ -133,7 +133,7 @@ class Settings {
 	/**
 	 * Load the settings form when settings page is called
 	 */
-	public function showForm(){
+	public static function showForm(){
 		include Registry::instance()->getPluginDir() . "admin/views/settings.php";
 	}
 

@@ -90,7 +90,7 @@ class Indexer  {
 				$indexer->indexObject( Registry::instance()->getDefaultIndex(), $objectToIndex );
 				do_action( 'mvnAlgObjectIndexedOnPostUpdate', $post, $objectToIndex );
 			}
-		} catch ( Exception $exc ) {
+		} catch ( \Exception $exc ) {
 
 		}
 	}
