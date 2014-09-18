@@ -71,6 +71,7 @@ class Settings {
 
 		wp_enqueue_script( 'jquery-ui-progressbar' );
 		wp_enqueue_script( 'jquery-ui-tabs' );
+		wp_enqueue_script( 'jquery-ui-accordion' );
 		wp_enqueue_script( 'mavenAlgoliaSettings', $jspath, array( 'jquery', 'jquery-ui-progressbar' ), Registry::instance()->getPluginVersion() );
 		wp_enqueue_script( 'jQueryValidate', Registry::instance()->getPluginUrl() . 'front/assets/scripts/jquery.validate.min.js', array( 'jquery' ), Registry::instance()->getPluginVersion() );
 		wp_enqueue_style( 'jquery-ui' );
@@ -189,6 +190,7 @@ class Settings {
 
 
 				$postTypesToIndex = Core\FieldsHelper::getPostTypesObject();
+                
 				if ( $postTypesToIndex && is_array( $postTypesToIndex ) && isset( $postTypesToIndex[$indexPostType] ) ) {
 					//				while ( !$error && list ( $postTypeKey, $postType) = each ( $postTypesToIndex ) ) {
 					$postType = $postTypesToIndex[$indexPostType];
@@ -455,12 +457,12 @@ class Settings {
 			if ( !isset( $_POST[self::settingsField] ) || !isset( $_POST[self::settingsField][$option] ) ) {
 				continue;
 			}
-
-			if ( is_array( $_POST[self::settingsField][$option] ) ) {
-				$options[$option] = array_map( 'sanitize_text_field', $_POST[self::settingsField][$option] );
-			} else {
-				$options[$option] = sanitize_text_field( $_POST[self::settingsField][$option] );
-			}
+            $options[$option] = $this->sanitize($_POST[self::settingsField][$option]);
+//			if ( is_array( $_POST[self::settingsField][$option] ) ) {
+//				$options[$option] = array_map( 'sanitize_text_field', $_POST[self::settingsField][$option] );
+//			} else {
+//				$options[$option] = sanitize_text_field( $_POST[self::settingsField][$option] );
+//			}
 		}
 
 		// If there is an apiKey and an appID validate them
@@ -490,5 +492,16 @@ class Settings {
 		wp_safe_redirect( $referer );
 		die( 'Failed redirect saving settings' );
 	}
+    
+    public function sanitize( $field ) {
+        if ( is_array( $field ) ) {
+            foreach ($field as $key => $value) {
+                $field[$key] = $this->sanitize($value);
+            }
+        } else {
+            $field = sanitize_text_field( $field );
+        }
+        return $field;
+    }
 
 }

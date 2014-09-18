@@ -53,7 +53,6 @@ class FieldsHelper {
 				$fields[$key] = new Domain\Field( $key, $value['label'], $value['type'] );
 			}
 		}
-
 		return $fields;
 	}
 
@@ -92,9 +91,44 @@ class FieldsHelper {
 		return $value;
 	}
 
-	public static function getPostTypesToIndex(){
-		$defaultPostsTypes = array(
+	public static function getStructureForPostTypesToIndex(){
+        $defaultStructure = array(
+				'index' => FALSE,
+				'indexFeaturedImage' => TRUE,
+				'taxonomies' => array(),
+                'metas' => array()
+            );
+		return $defaultStructure;
+	}
+
+	public static function getPostTypesToIndex() {
+        $postTypesToIndex = Registry::instance()->getPostTypesToIndex();
+        $wpPostTypes = self::getWPPostTypes();
+        
+        if( empty( $postTypesToIndex ) ){
+            $postTypesToIndex = self::getDefaultPostTypesToIndex();
+        }
+        
+        if( $postTypesToIndex && $wpPostTypes ){
+            foreach ($postTypesToIndex as $postTypeKey => $postTypeValue) {
+                // If it the post type desn't exists remove it to avoid trying to index
+                if( ! in_array( $postTypeKey, $wpPostTypes ) ){
+                    unset($postTypesToIndex[$postTypeKey]);
+                }
+            }
+        }
+        
+		return apply_filters( 'mvnAlgPostsTypesToIndex', $postTypesToIndex );
+	}
+
+	public static function getWPPostTypes( $args = array() ){
+        return get_post_types( wp_parse_args( $args, array( 'exclude_from_search' => false ) ) );
+	}
+    
+    public static function getDefaultPostTypesToIndex() {
+        $defaultPostsTypes = array(
 			'post' => array(
+				'index' => TRUE,
 				'indexFeaturedImage' => TRUE,
 				'taxonomies' => array(
 					'category' => array( 'algoliaName' => 'category', 'isTag' => FALSE, 'forFaceting' => TRUE ),
@@ -103,14 +137,15 @@ class FieldsHelper {
 			//'metas' => 	array( '{{META_KEY}}' =>  array( 'algoliaName' => '{{FIELD_NAME_IN_ALGOLIA}}', 'isSingle' => TRUE, 'type' => '{{FIELD_TYPE}}' ) )
 			),
 			'page' => array(
+                'index' => TRUE,
 				'indexFeaturedImage' => TRUE,
 			//'metas' => 	array( '{{META_KEY}}' =>  array( 'algoliaName' => '{{FIELD_NAME_IN_ALGOLIA}}', 'isSingle' => TRUE, 'type' => '{{FIELD_TYPE}}' ) )
 			),
 		);
-		return apply_filters( 'mvnAlgPostsTypesToIndex', $defaultPostsTypes );
-	}
+        return $defaultPostsTypes;
+    }
 
-	public static function getPostTypesObject(){
+    public static function getPostTypesObject(){
 		$postTypesObjects = array();
 		$postTypes = self::getPostTypesToIndex();
 		foreach ( $postTypes as $postType => $fields ) {

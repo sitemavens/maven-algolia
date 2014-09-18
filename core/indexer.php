@@ -593,7 +593,14 @@ class Indexer {
 		}
 		$postFields = $types->getFieldsIdsForQuery();
 		$join = apply_filters( 'mvnAlgIndexDataJoin', '' );
-		$where = apply_filters( 'mvnAlgIndexDataWhere', " AND ( post_status IN ('publish') AND post_type = '{$types->getType()}' )" );
+        
+        $postStatus = array( 'publish' );
+        if( $types->getType() === Domain\PostType::PostTypeMedia ){
+            array_push($postStatus, 'inherit');
+        }
+        $postStatus = implode("','", $postStatus);
+        
+		$where = apply_filters( 'mvnAlgIndexDataWhere', " AND ( post_status IN ('{$postStatus}') AND post_type = '{$types->getType()}' )" );
 		$query = "SELECT {$postFields} FROM {$wpdb->posts} {$join} WHERE 1 = 1 {$where} {$limit}";
 		$posts = $wpdb->get_results( $query );
 		$totalIndexed = 0;

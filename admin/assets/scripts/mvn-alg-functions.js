@@ -398,6 +398,7 @@ function getTaxonomyTypeToIndex( index ){
 	$(document).ready(function(){
 		
 		jQuery("#mvnAlgtabs").tabs();
+        jQuery( "#postTypesAccordion" ).accordion({heightStyle: "content"});
 		
 		jQuery('#mvnAlg_validate' ).on('click', function(e){
 			validateCredentials();

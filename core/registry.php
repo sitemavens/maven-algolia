@@ -41,7 +41,8 @@ class Registry {
 				'popupThumbnailArgs' => array( 'w' => 20, 'h' => 40 ),
 				'showExcerptInPopup' => '0',
 				'excerptMaxChars' => '0',
-				'defaultThumbSrc' => ''
+				'defaultThumbSrc' => '',
+                'postTypesToIndex' => array()
 			);
 
 			self::$instance = new self( );
@@ -286,6 +287,10 @@ class Registry {
 
 	public function getExcerptMaxChars() {
 		return $this->getValue( 'excerptMaxChars' );
+	}
+
+	public function getPostTypesToIndex() {
+		return $this->getValue( 'postTypesToIndex' );
 	}
 
 	public function showThumbInPopup() {

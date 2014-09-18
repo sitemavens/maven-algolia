@@ -42,6 +42,7 @@ class Initializer {
 				'showExcerptInPopup' => Registry::instance()->showExcerptInPopup(),
 				'excerptMaxChars' => Registry::instance()->getExcerptMaxChars(),
 				'indexTaxonomies' => Registry::instance()->indexTaxonomies(),
+				'postTypesToIndex' => Registry::instance()->getPostTypesToIndex() ? Registry::instance()->getPostTypesToIndex() : array( ),
 				'showThumbInPopup' => Registry::instance()->showThumbInPopup(),
 				'popupThumbnailArgs' => (Registry::instance()->showThumbInPopup()) ? Registry::instance()->getPopupThumbnailArgs() : array(),
 				'defaultThumbSrc' => (Registry::instance()->getDefaultThumbSrc()) ? Registry::instance()->getDefaultThumbSrc() : '',

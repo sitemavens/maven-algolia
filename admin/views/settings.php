@@ -137,6 +137,79 @@ $langDomain = $registry->getPluginShortName();
 					</tr>
 					</tbody>
 				</table>
+				
+
+				<table class="widefat"  style="width: 50%">
+					<thead>
+						<tr>
+							<th class="row-title" colspan="2"><strong><?php esc_html_e( 'Post Types', $langDomain ); ?></strong></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">
+                                								<?php esc_html_e( 'This is the list of Posts Types that would be indexed.', $langDomain ); ?><br>
+
+								<div id="postTypesAccordion">
+								<?php
+									$wpPostTypes = Core\FieldsHelper::getWPPostTypes();
+									$savedPostTypesToIndex = Core\FieldsHelper::getPostTypesToIndex();
+									if ( $wpPostTypes ):
+										$postTypesLabel = Core\FieldsHelper::getPostTypesLabels( $wpPostTypes );
+										foreach ( $wpPostTypes as $postKey => $postType ) :
+                                            $postTypeToIndex = Core\FieldsHelper::getStructureForPostTypesToIndex();
+                                            if ( isset( $savedPostTypesToIndex[$postKey] ) && $savedPostTypesToIndex[$postKey] ){
+                                                 $postTypeToIndex = wp_parse_args($savedPostTypesToIndex[$postKey], $postTypeToIndex);
+                                            }
+											?>
+											<h3>
+												<?php echo esc_html($postTypesLabel[$postKey]); ?>
+											</h3>
+											<div>
+                                                <!-- Index featured image as mandatory -->
+                                                <input type="hidden" value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][indexFeaturedImage]">
+												
+                                                <?php esc_html_e('Index ', $langDomain); ?> <?php echo esc_html($postTypesLabel[$postKey]); ?>? 
+												<input type="hidden" value="0"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][index]">
+												<input type="checkbox" class="checkbox" <?php checked( $postTypeToIndex['index'] ); ?> value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][index]">
+												<br>
+												<?php $taxonomies = get_object_taxonomies( $postKey, 'objects' ); ?>
+												<?php if($taxonomies): ?>
+													<?php foreach ($taxonomies as $taxKey => $taxObj): ?>
+													<?php if($taxObj->public): ?>
+														<?php esc_html_e('Index ', $langDomain); ?> <?php echo esc_html($taxKey); ?> <?php esc_html_e('as', $langDomain); ?>: 
+														<p>
+															<?php esc_html_e('Tag ', $langDomain); ?> 
+															<input type="hidden" value="0"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][isTag]">
+															<input type="checkbox" class="checkbox" <?php checked( !empty($postTypeToIndex['taxonomies'][$taxKey]['isTag']) ); ?> value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][isTag]">
+														</p>
+														<p>
+															<?php esc_html_e('For faceting ', $langDomain); ?> 
+															<input type="hidden" value="0"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][forFaceting]">
+															<input type="checkbox" class="checkbox" <?php checked( !empty($postTypeToIndex['taxonomies'][$taxKey]['forFaceting']) ); ?> value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][forFaceting]">
+															<br>
+															<em><?php esc_html_e('If it is checked an "Algolia" field will be generated automatically with the name: ', $langDomain); ?> "<?php echo esc_html($taxKey); ?>"</em>
+															<input type="hidden" value="<?php echo esc_attr( $taxKey ); ?>" name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][algoliaName]">
+														</p>
+														<?php endif; ?>
+													<?php endforeach; ?>
+												<?php endif; ?>
+																
+											</div>
+											<?php
+										endforeach;
+									endif;
+									?>
+								</div>
+						</th>
+					</tr>
+					<tr>
+						<td>
+							<p class="submit"><input type="submit" value="<?php esc_attr_e( 'Save Changes', $langDomain ); ?>" class="button button-primary" id="submit" name="submit"></p>
+						</td>
+					</tr>
+					</tbody>
+				</table>
 			</div>
 			<div id="tab-general">
 				<input type="hidden" value="<?php echo Settings::updateAction; ?>" name="mvnAlg_action">

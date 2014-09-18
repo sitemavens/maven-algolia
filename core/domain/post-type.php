@@ -7,6 +7,7 @@ class PostType{
 	
 	const PostTypePage = 'page';
 	const PostTypePost = 'post';
+	const PostTypeMedia = 'attachment';
 	
 	private $type;
 	
