@@ -98,117 +98,126 @@ $langDomain = $registry->getPluginShortName();
 				</table>
 			</div>
 			<div id="tab-customization">
-				<table class="widefat"  style="width: 50%">
-					<thead>
-						<tr>
-							<th class="row-title" colspan="2"><strong><?php esc_html_e( 'Taxonomies', $langDomain ); ?></strong></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>
-								<label for="mvnAlg_indexTaxonomies"><?php esc_html_e( 'Check if you want to index taxonomies', $langDomain ); ?></label>
-								<input type="hidden" value="0" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
-								<input type="checkbox" class="checkbox" <?php checked( $registry->indexTaxonomies() ); ?> value="1" id="mvnAlg_indexTaxonomies" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">
-								<?php esc_html_e( 'This is the list of Taxonomies that would be indexed, please remember that each taxonomy will have its own index name and they will appear separately in the "suggestions search" popup.', $langDomain ); ?><br>
-								<?php printf( '<strong>%s:</strong> %s', esc_html__( 'Important', $langDomain ), esc_html__( 'when you enable index taxonomies option you should reindex all the content.', $langDomain ) ); ?><br>
-					<ul><?php
-						$taxonomiesToIndex = Core\FieldsHelper::getTaxonomyObjects();
-						if ( $taxonomiesToIndex ):
-							$taxonomiesLabels = Core\FieldsHelper::getTaxonomyLabels();
-							foreach ( $taxonomiesToIndex as $taxKey => $tax ) :
-								?>
-								<li><?php echo sprintf( '<strong>%s</strong>: %s <br> <strong>%s</strong>: %s', __( 'Taxonomy' ), $taxonomiesLabels[$taxKey], __( 'Index Name' ), $tax->getIndexName() ); ?></li>
-								<?php
-							endforeach;
-						endif;
-						?>
-					</ul>
-					</th>
-					</tr>
+				<table class="widefat">
 					<tr>
-						<td>
-							<p class="submit"><input type="submit" value="<?php esc_attr_e( 'Save Changes', $langDomain ); ?>" class="button button-primary" id="submit" name="submit"></p>
-						</td>
-					</tr>
-					</tbody>
-				</table>
-				
+						
+						<td style="width: 47%">
+							<table class="widefat">
+								<thead>
+									<tr>
+										<th class="row-title" colspan="2"><strong><?php esc_html_e( 'Post Types', $langDomain ); ?></strong></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row">
+			                                <?php esc_html_e( 'This is the list of Posts Types that would be indexed.', $langDomain ); ?><br>
 
-				<table class="widefat"  style="width: 50%">
-					<thead>
-						<tr>
-							<th class="row-title" colspan="2"><strong><?php esc_html_e( 'Post Types', $langDomain ); ?></strong></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th scope="row">
-                                								<?php esc_html_e( 'This is the list of Posts Types that would be indexed.', $langDomain ); ?><br>
-
-								<div id="postTypesAccordion">
-								<?php
-									$wpPostTypes = Core\FieldsHelper::getWPPostTypes();
-									$savedPostTypesToIndex = Core\FieldsHelper::getPostTypesToIndex();
-									if ( $wpPostTypes ):
-										$postTypesLabel = Core\FieldsHelper::getPostTypesLabels( $wpPostTypes );
-										foreach ( $wpPostTypes as $postKey => $postType ) :
-                                            $postTypeToIndex = Core\FieldsHelper::getStructureForPostTypesToIndex();
-                                            if ( isset( $savedPostTypesToIndex[$postKey] ) && $savedPostTypesToIndex[$postKey] ){
-                                                 $postTypeToIndex = wp_parse_args($savedPostTypesToIndex[$postKey], $postTypeToIndex);
-                                            }
-											?>
-											<h3>
-												<?php echo esc_html($postTypesLabel[$postKey]); ?>
-											</h3>
-											<div>
-                                                <!-- Index featured image as mandatory -->
-                                                <input type="hidden" value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][indexFeaturedImage]">
-												
-                                                <?php esc_html_e('Index ', $langDomain); ?> <?php echo esc_html($postTypesLabel[$postKey]); ?>? 
-												<input type="hidden" value="0"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][index]">
-												<input type="checkbox" class="checkbox" <?php checked( $postTypeToIndex['index'] ); ?> value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][index]">
-												<br>
-												<?php $taxonomies = get_object_taxonomies( $postKey, 'objects' ); ?>
-												<?php if($taxonomies): ?>
-													<?php foreach ($taxonomies as $taxKey => $taxObj): ?>
-													<?php if($taxObj->public): ?>
-														<?php esc_html_e('Index ', $langDomain); ?> <?php echo esc_html($taxKey); ?> <?php esc_html_e('as', $langDomain); ?>: 
-														<p>
-															<?php esc_html_e('Tag ', $langDomain); ?> 
-															<input type="hidden" value="0"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][isTag]">
-															<input type="checkbox" class="checkbox" <?php checked( !empty($postTypeToIndex['taxonomies'][$taxKey]['isTag']) ); ?> value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][isTag]">
-														</p>
-														<p>
-															<?php esc_html_e('For faceting ', $langDomain); ?> 
-															<input type="hidden" value="0"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][forFaceting]">
-															<input type="checkbox" class="checkbox" <?php checked( !empty($postTypeToIndex['taxonomies'][$taxKey]['forFaceting']) ); ?> value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][forFaceting]">
-															<br>
-															<em><?php esc_html_e('If it is checked an "Algolia" field will be generated automatically with the name: ', $langDomain); ?> "<?php echo esc_html($taxKey); ?>"</em>
-															<input type="hidden" value="<?php echo esc_attr( $taxKey ); ?>" name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][algoliaName]">
-														</p>
-														<?php endif; ?>
-													<?php endforeach; ?>
-												<?php endif; ?>
-																
+											<div id="postTypesAccordion">
+											<?php
+												$wpPostTypes = Core\FieldsHelper::getWPPostTypes();
+												$savedPostTypesToIndex = Core\FieldsHelper::getPostTypesToIndex();
+												if ( $wpPostTypes ):
+													$postTypesLabel = Core\FieldsHelper::getPostTypesLabels( $wpPostTypes );
+													foreach ( $wpPostTypes as $postKey => $postType ) :
+			                                            $postTypeToIndex = Core\FieldsHelper::getStructureForPostTypesToIndex();
+			                                            if ( isset( $savedPostTypesToIndex[$postKey] ) && $savedPostTypesToIndex[$postKey] ){
+			                                                 $postTypeToIndex = wp_parse_args($savedPostTypesToIndex[$postKey], $postTypeToIndex);
+			                                            }
+														?>
+														<h3>
+															<?php echo esc_html($postTypesLabel[$postKey]); ?>
+														</h3>
+														<div>
+			                                                <!-- Index featured image as mandatory -->
+			                                                <input type="hidden" value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][indexFeaturedImage]">
+															
+			                                                <?php esc_html_e('Check to Index ', $langDomain); ?> <?php echo esc_html($postTypesLabel[$postKey]); ?>
+															<input type="hidden" value="0"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][index]">
+															<input type="checkbox" class="checkbox" <?php checked( $postTypeToIndex['index'] ); ?> value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][index]">
+																<?php $taxonomies = get_object_taxonomies( $postKey, 'objects' ); ?>
+																<?php if($taxonomies): ?>
+																<div class="mvnAlg-taxonomies-list">
+																	<h4 class="mvnAlg-taxonomy-settings-title"><?php echo esc_html($postTypesLabel[$postKey]); ?> <?php esc_html_e( 'Taxonomies Settings', $langDomain ) ?></h4>
+																	<?php foreach ($taxonomies as $taxKey => $taxObj): ?>
+																	<?php if($taxObj->public): ?>
+																		<?php $theTaxLabels = get_taxonomy_labels( get_taxonomy($taxKey) ); ?>
+																		<h4><?php esc_html_e( $theTaxLabels->name, $langDomain ); ?> (<?php echo esc_html($taxKey); ?>)</h4>
+																		<p>
+																			<?php esc_html_e('Index as Algolia Tag ', $langDomain); ?> 
+																			<input type="hidden" value="0"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][isTag]">
+																			<input type="checkbox" class="checkbox" <?php checked( !empty($postTypeToIndex['taxonomies'][$taxKey]['isTag']) ); ?> value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][isTag]">
+																		</p>
+																		<p>
+																			<?php esc_html_e('Index as Algolia facet', $langDomain); ?> 
+																			<input type="hidden" value="0"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][forFaceting]">
+																			<input type="checkbox" class="checkbox" <?php checked( !empty($postTypeToIndex['taxonomies'][$taxKey]['forFaceting']) ); ?> value="1"  name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][forFaceting]">
+																			<br>
+																			<em><?php esc_html_e('If it is checked an "Algolia" field will be generated automatically with the name: ', $langDomain); ?> "<?php echo esc_html($taxKey); ?>"</em>
+																			<input type="hidden" value="<?php echo esc_attr( $taxKey ); ?>" name="<?php echo Settings::settingsField; ?>[postTypesToIndex][<?php echo esc_attr($postKey); ?>][taxonomies][<?php echo esc_attr($taxKey); ?>][algoliaName]">
+																		</p>
+																		<?php endif; ?>
+																	<?php endforeach; ?>
+																</div>				
+																<?php endif; ?>
+														</div>
+														<?php
+													endforeach;
+												endif;
+												?>
 											</div>
+									</th>
+								</tr>
+								<tr>
+									<td>
+										<p class="submit"><input type="submit" value="<?php esc_attr_e( 'Save Changes', $langDomain ); ?>" class="button button-primary" id="submit" name="submit"></p>
+									</td>
+								</tr>
+								</tbody>
+							</table>
+						</td>
+						<td style="width: 47%">
+							<table class="widefat">
+								<thead>
+									<tr>
+										<th class="row-title" colspan="2"><strong><?php esc_html_e( 'Taxonomies', $langDomain ); ?></strong></th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>
+											<label for="mvnAlg_indexTaxonomies"><?php esc_html_e( 'Check if you want to index taxonomies', $langDomain ); ?></label>
+											<input type="hidden" value="0" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
+											<input type="checkbox" class="checkbox" <?php checked( $registry->indexTaxonomies() ); ?> value="1" id="mvnAlg_indexTaxonomies" name="<?php echo Settings::settingsField; ?>[indexTaxonomies]">
+										</td>
+									</tr>
+									<tr>
+										<th scope="row">
+											<?php esc_html_e( 'This is the list of Taxonomies that would be indexed, please remember that each taxonomy will have its own index name and they will appear separately in the "suggestions search" popup.', $langDomain ); ?><br>
+											<?php printf( '<strong>%s:</strong> %s', esc_html__( 'Important', $langDomain ), esc_html__( 'when you enable index taxonomies option you should reindex all the content.', $langDomain ) ); ?><br>
+								<ul><?php
+									$taxonomiesToIndex = Core\FieldsHelper::getTaxonomyObjects();
+									if ( $taxonomiesToIndex ):
+										$taxonomiesLabels = Core\FieldsHelper::getTaxonomyLabels();
+										foreach ( $taxonomiesToIndex as $taxKey => $tax ) :
+											?>
+											<li><?php echo sprintf( '<strong>%s</strong>: %s <br> <strong>%s</strong>: %s', __( 'Taxonomy' ), $taxonomiesLabels[$taxKey], __( 'Index Name' ), $tax->getIndexName() ); ?></li>
 											<?php
 										endforeach;
 									endif;
 									?>
-								</div>
-						</th>
-					</tr>
-					<tr>
-						<td>
-							<p class="submit"><input type="submit" value="<?php esc_attr_e( 'Save Changes', $langDomain ); ?>" class="button button-primary" id="submit" name="submit"></p>
+								</ul>
+								</th>
+								</tr>
+								<tr>
+									<td>
+										<p class="submit"><input type="submit" value="<?php esc_attr_e( 'Save Changes', $langDomain ); ?>" class="button button-primary" id="submit" name="submit"></p>
+									</td>
+								</tr>
+								</tbody>
+							</table>
 						</td>
 					</tr>
-					</tbody>
 				</table>
 			</div>
 			<div id="tab-general">

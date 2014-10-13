@@ -437,3 +437,11 @@
     background: none;
     border: none;
 }
+#mvnAlgoliaSettings .mvnAlg-taxonomies-list {
+    border-top: 1px dotted #777; 
+    margin-top: 15px;
+}
+#mvnAlgoliaSettings .mvnAlg-taxonomy-settings-title {
+    border-bottom: 1px solid #EFEFEF; 
+    padding: 3px 0;
+}
