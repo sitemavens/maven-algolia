@@ -18,7 +18,7 @@ if ( !defined( 'ABSPATH' ) )
 
 //These are the only require_once needed. Then you should use the Loader class
 require_once plugin_dir_path( __FILE__ ) . '/core/loader.php';
-Core\Loader::load( plugin_dir_path( __FILE__ ), array( 'core/registry', 'core/utils',  'core/utils-algolia', 'lib/src/AlgoliaSearch/Index', 'lib/src/AlgoliaSearch/Client', 'lib/src/AlgoliaSearch/ClientContext', 'lib/src/AlgoliaSearch/AlgoliaException' ) );
+Core\Loader::load( plugin_dir_path( __FILE__ ), array( 'core/registry', 'core/indexer','core/fields-helper', 'core/domain/taxonomy', 'core/domain/post-type', 'core/domain/meta-field', 'core/domain/post-taxonomy', 'core/domain/post-index-info', 'core/domain/field', 'core/utils',  'core/utils-algolia', 'lib/src/AlgoliaSearch/Index', 'lib/src/AlgoliaSearch/Client', 'lib/src/AlgoliaSearch/ClientContext', 'lib/src/AlgoliaSearch/AlgoliaException' ) );
 
 $registry = Core\Registry::instance();
 $registry->setPluginDir( plugin_dir_path( __FILE__ ) );
